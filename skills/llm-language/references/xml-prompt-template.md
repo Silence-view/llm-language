@@ -1,11 +1,11 @@
-# XML Prompt Template — slave-language
+# XML Prompt Template — llm-language
 
 This is the canonical XML structure that the Producer agent must generate. Every field is documented with its purpose and expected content.
 
 ## Template
 
 ```xml
-<slave-prompt version="1.0" model="opus-4.6" thinking="ultrathink">
+<llm-prompt version="1.0" model="opus-4.6" thinking="ultrathink">
 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- META: Classification and routing metadata                  -->
@@ -214,7 +214,7 @@ This is the canonical XML structure that the Producer agent must generate. Every
     <case><!-- edge case 2 --></case>
   </edge-cases>
 
-</slave-prompt>
+</llm-prompt>
 ```
 
 ## Field Priority

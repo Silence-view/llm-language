@@ -1,18 +1,18 @@
 ---
-name: slave-language
+name: llm-language
 version: "1.0"
 description: >
   Use when receiving ANY user message, task, or prompt that requires
   execution. Invoke BEFORE any other action to re-engineer the prompt
   through multi-agent debate with scientific optimization. Triggers on:
   code requests, analysis, research, creative tasks, debugging, design,
-  refactoring, writing. Also triggers on "slave-language", "optimize
+  refactoring, writing. Also triggers on "llm-language", "optimize
   prompt", "re-engineer prompt", "massima precisione", "maximum quality".
-  Skip only for greetings or when user says "skip slave-language".
+  Skip only for greetings or when user says "skip llm-language".
   Opus 4.6 + ultrathink.
 ---
 
-# slave-language
+# llm-language
 
 ## Overview
 
@@ -24,7 +24,7 @@ A prompt meta-compiler that intercepts user messages, re-engineers them through 
 
 **ALWAYS.** This skill applies to every user message. The only exceptions are:
 - Messages that are purely conversational greetings ("hello", "thanks")
-- Messages that explicitly say "skip slave-language" or "raw mode"
+- Messages that explicitly say "skip llm-language" or "raw mode"
 
 For everything else — code, analysis, writing, research, debugging, design — run the full pipeline.
 
@@ -49,7 +49,7 @@ Skills: [name1: description1, name2: description2, ...]
 Agents: [name1: description1, name2: description2, ...]
 ```
 
-**CRITICAL: Exclude `slave-language` from the registry.** Never include this skill in the discovered list to prevent recursive self-invocation.
+**CRITICAL: Exclude `llm-language` from the registry.** Never include this skill in the discovered list to prevent recursive self-invocation.
 
 **1.3 Classify Complexity**
 
@@ -221,7 +221,7 @@ After revision, dispatch the Critic Agent one more time for final scoring.
 Before executing, output a brief summary to give the user transparency:
 
 ```
-`★ slave-language ──────────────────────────────`
+`★ llm-language ──────────────────────────────`
 Applied: {techniques used, e.g., "CoT + ToT + Self-Refine"}
 Role: {persona, e.g., "Senior Systems Architect"}
 Complexity: {level} | Sub-tasks: {N} | Thinking: ultrathink
@@ -282,7 +282,7 @@ This overhead is the cost of maximum precision. For tasks where speed matters mo
 | Using role prompting for factual claims | Use role for style/format alignment, not knowledge claims |
 | Running too many revision rounds | Max 2 rounds. Diminishing returns after that. |
 | Applying ToT to simple tasks | Match technique to complexity using Decision Matrix |
-| Recursive self-invocation | In Phase 1.2, EXCLUDE slave-language from the skill registry. Never recommend invoking slave-language from within a generated XML prompt. |
+| Recursive self-invocation | In Phase 1.2, EXCLUDE llm-language from the skill registry. Never recommend invoking llm-language from within a generated XML prompt. |
 
 ## Scientific Grounding
 

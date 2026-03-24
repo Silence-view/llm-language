@@ -1,4 +1,4 @@
-# Scoring Rubric — slave-language Critic Agent
+# Scoring Rubric — llm-language Critic Agent
 
 ## Overview
 

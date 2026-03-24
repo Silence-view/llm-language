@@ -1,5 +1,5 @@
 {
-  "name": "slave-language",
+  "name": "llm-language",
   "version": "1.0.0",
   "description": "Prompt meta-compiler that re-engineers every user message through multi-agent debate grounded in 100+ scientific papers, producing optimized XML prompts for Claude Opus 4.6 with ultrathink."
 }

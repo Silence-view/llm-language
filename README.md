@@ -1,4 +1,4 @@
-# slave-language
+# llm-language
 
 **A scientifically-grounded prompt meta-compiler for Claude Code**
 
@@ -8,13 +8,13 @@
 
 ## Overview
 
-`slave-language` is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that intercepts every user message and re-engineers it through a multi-agent Generate-Critique-Revise pipeline before execution. The system produces an optimized XML-structured prompt that is ephemeral (never saved to disk) and executed with maximum reasoning depth.
+`llm-language` is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that intercepts every user message and re-engineers it through a multi-agent Generate-Critique-Revise pipeline before execution. The system produces an optimized XML-structured prompt that is ephemeral (never saved to disk) and executed with maximum reasoning depth.
 
 The pipeline implements a **Diverse Multi-Agent Debate** (DMAD) architecture where a Producer agent generates an optimized prompt and an independent Critic agent evaluates it against a 6-dimension scoring rubric. If the score falls below 8.5/10, the prompt is revised and re-evaluated, up to 2 rounds.
 
 ### Key Features
 
-- **Automatic interception** of every user message (skippable with "skip slave-language")
+- **Automatic interception** of every user message (skippable with "skip llm-language")
 - **Multi-agent debate**: Producer (generator) + Critic (evaluator) with heterogeneous roles
 - **Scientific grounding**: 15+ techniques from 100+ papers mapped to task types
 - **XML-structured output**: leverages Claude's native XML parsing capabilities
@@ -76,15 +76,15 @@ This registers the GitHub repository as a Claude Code marketplace, making it ins
 
 ```bash
 # Step 1: Add the GitHub repository as a marketplace source
-claude plugins marketplace add https://github.com/Silence-view/slave-language
+claude plugins marketplace add https://github.com/Silence-view/llm-language
 
 # Step 2: Install the plugin globally (user scope = works in any directory)
-claude plugins install slave-language@slave-language --scope user
+claude plugins install llm-language@llm-language --scope user
 
 # Step 3: Verify installation
 claude plugins list
 # Expected output:
-#   slave-language@slave-language
+#   llm-language@llm-language
 #   Version: 1.0.0
 #   Scope: user
 #   Status: enabled
@@ -92,13 +92,13 @@ claude plugins list
 
 To update to a newer version later:
 ```bash
-claude plugins install slave-language@slave-language --scope user
+claude plugins install llm-language@llm-language --scope user
 ```
 
 To uninstall:
 ```bash
-claude plugins uninstall slave-language@slave-language
-claude plugins marketplace remove slave-language
+claude plugins uninstall llm-language@llm-language
+claude plugins marketplace remove llm-language
 ```
 
 ### Method 2: Install from Local Clone
@@ -107,13 +107,13 @@ If you want to modify the skill or develop locally:
 
 ```bash
 # Step 1: Clone the repository
-git clone https://github.com/Silence-view/slave-language.git ~/.claude/plugins/local/slave-language
+git clone https://github.com/Silence-view/llm-language.git ~/.claude/plugins/local/llm-language
 
 # Step 2: Register the local folder as a marketplace
-claude plugins marketplace add ~/.claude/plugins/local/slave-language
+claude plugins marketplace add ~/.claude/plugins/local/llm-language
 
 # Step 3: Install at user scope
-claude plugins install slave-language@slave-language --scope user
+claude plugins install llm-language@llm-language --scope user
 
 # Step 4: Verify
 claude plugins list
@@ -127,8 +127,8 @@ If you don't need the full plugin infrastructure:
 
 ```bash
 # Copy just the skill directory
-git clone https://github.com/Silence-view/slave-language.git /tmp/sl-temp
-cp -r /tmp/sl-temp/skills/slave-language ~/.claude/skills/slave-language
+git clone https://github.com/Silence-view/llm-language.git /tmp/sl-temp
+cp -r /tmp/sl-temp/skills/llm-language ~/.claude/skills/llm-language
 rm -rf /tmp/sl-temp
 ```
 
@@ -141,7 +141,7 @@ rm -rf /tmp/sl-temp
 Once installed, the skill triggers automatically on every user message. You'll see a summary banner before each response:
 
 ```
-★ slave-language ──────────────────────────────
+★ llm-language ──────────────────────────────
 Applied: CoT + Self-Refine | Role: Senior Backend Engineer
 Complexity: moderate | Sub-tasks: 3 | Thinking: ultrathink
 Score: 8.7/10 | Rounds: 1
@@ -152,22 +152,22 @@ Skills matched: paper, humanizer
 ### Manual Invocation
 
 ```
-/slave-language
+/llm-language
 ```
 
 ### Skip for a Message
 
-Include "skip slave-language" or "raw mode" in your message to bypass the pipeline.
+Include "skip llm-language" or "raw mode" in your message to bypass the pipeline.
 
 ## File Structure
 
 ```
-slave-language/
+llm-language/
 ├── .claude-plugin/
 │   ├── plugin.json              # Plugin identity
 │   └── marketplace.json         # Registration metadata
 ├── skills/
-│   └── slave-language/
+│   └── llm-language/
 │       ├── SKILL.md             # Main skill (pipeline orchestrator)
 │       └── references/
 │           ├── scientific-principles.md   # 15+ techniques, 100+ papers
@@ -187,7 +187,7 @@ The system synthesizes findings from the following research areas. For the full 
 
 #### A. Reasoning Enhancement
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | Chain-of-Thought (CoT) | Wei et al., NeurIPS 2022 | Step-by-step decomposition in `<methodology>` |
 | Zero-Shot CoT | Kojima et al., NeurIPS 2022 | "Think step by step" triggers for simple tasks |
@@ -197,7 +197,7 @@ The system synthesizes findings from the following research areas. For the full 
 
 #### B. Self-Improvement & Reflection
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | Self-Refine | Madaan et al., NeurIPS 2023 | Core Generate-Critique-Revise cycle |
 | Reflexion | Shinn et al., NeurIPS 2023 | Learning from prior critique feedback |
@@ -205,7 +205,7 @@ The system synthesizes findings from the following research areas. For the full 
 
 #### C. Structural Optimization
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | XML Structured Prompting | Xu et al., arXiv 2025; Anthropic 2025 | Entire output is XML-structured |
 | Instruction Hierarchy | Wallace et al., 2024 | MUST/SHOULD/MAY priority ordering |
@@ -213,7 +213,7 @@ The system synthesizes findings from the following research areas. For the full 
 
 #### D. Meta-Techniques
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | Meta-Prompting | Fernando et al., 2023; Suzgun & Kalai, 2024 | The skill IS meta-prompting |
 | Automatic Prompt Engineering | Zhou et al., ICLR 2023 | Automated prompt optimization |
@@ -221,14 +221,14 @@ The system synthesizes findings from the following research areas. For the full 
 
 #### E. Multi-Agent Techniques
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | Multi-Agent Debate (MAD) | Du et al., ICML 2024 | Producer-Critic debate cycle |
 | Diverse MAD (DMAD) | Liang et al., 2024 | Heterogeneous agent roles |
 
 #### F. Model-Specific (Claude Opus 4.6)
 
-| Technique | Citation | Application in slave-language |
+| Technique | Citation | Application in llm-language |
 |---|---|---|
 | Extended Thinking | Anthropic, 2025-2026 | Ultrathink with ~32K thinking tokens |
 | Claude XML Best Practices | Anthropic, 2025 | Consistent tags, primacy/recency |
@@ -268,7 +268,7 @@ Contributions are welcome. Areas of interest:
 
 - **New scoring dimensions** for the rubric
 - **Technique-specific optimizations** for different Claude models
-- **Benchmark results** comparing slave-language outputs vs raw prompts
+- **Benchmark results** comparing llm-language outputs vs raw prompts
 - **Domain-specific XML templates** (e.g., for code review, academic writing)
 
 ## License
@@ -280,11 +280,11 @@ MIT License. See [LICENSE](LICENSE).
 If you use this work in academic research, please cite:
 
 ```bibtex
-@software{slave_language_2026,
-  title     = {slave-language: A Scientifically-Grounded Prompt Meta-Compiler for Claude Code},
+@software{llm_language_2026,
+  title     = {llm-language: A Scientifically-Grounded Prompt Meta-Compiler for Claude Code},
   author    = {Andre},
   year      = {2026},
-  url       = {https://github.com/Silence-view/slave-language},
+  url       = {https://github.com/Silence-view/llm-language},
   note      = {Multi-agent prompt optimization plugin implementing DMAD, Self-Refine,
                and XML-structured prompting for Claude Opus 4.6},
   license   = {MIT}

@@ -1,6 +1,6 @@
 # Scientific Prompt Engineering Principles
 
-Reference for the slave-language skill. Each principle includes: citation, when to apply, how to embed in XML, and a transformation example.
+Reference for the llm-language skill. Each principle includes: citation, when to apply, how to embed in XML, and a transformation example.
 
 ---
 
@@ -83,9 +83,9 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **Citation:** Madaan et al., "Self-Refine: Iterative Refinement with Self-Feedback," NeurIPS 2023.
 
-**When to apply:** Any generative task where quality can be improved iteratively. Writing, code generation, design decisions. Core mechanism of the slave-language critique cycle.
+**When to apply:** Any generative task where quality can be improved iteratively. Writing, code generation, design decisions. Core mechanism of the llm-language critique cycle.
 
-**How to embed:** This is the architectural backbone of slave-language. The Generate → Critique → Revise cycle IS Self-Refine applied to prompt engineering.
+**How to embed:** This is the architectural backbone of llm-language. The Generate → Critique → Revise cycle IS Self-Refine applied to prompt engineering.
 
 ---
 
@@ -124,7 +124,7 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **Benefits:** Reduces hallucination, improves parsing accuracy, enables hierarchical instruction, aligns with Claude's training distribution.
 
-**How to embed:** The entire slave-language output IS an XML-structured prompt. Every section is wrapped in semantic XML tags.
+**How to embed:** The entire llm-language output IS an XML-structured prompt. Every section is wrapped in semantic XML tags.
 
 ---
 
@@ -171,7 +171,7 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **Citation:** Fernando et al., "Promptbreeder: Self-Referential Self-Improvement via Prompt Evolution," 2023. Suzgun & Kalai, "Meta-Prompting: Enhancing Language Models with Task-Agnostic Scaffolding," 2024.
 
-**When to apply:** This IS the slave-language skill. Meta-prompting is the use of an LLM to generate/optimize prompts for itself. The entire skill is a meta-prompting system.
+**When to apply:** This IS the llm-language skill. Meta-prompting is the use of an LLM to generate/optimize prompts for itself. The entire skill is a meta-prompting system.
 
 **Key insight:** GPT-4 with meta-prompting solved 100% of Game of 24 puzzles with one-pass reasoning, outperforming alternatives by 15-17%.
 
@@ -216,7 +216,7 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **Caveat (IMPORTANT):** Recent evaluations show MAD does NOT consistently outperform Self-Consistency on benchmarks. Use the Diverse MAD (DMAD) variant — heterogeneous agent roles (Producer vs Critic) consistently outperform homogeneous debate.
 
-**How to embed:** The slave-language pipeline uses DMAD: Producer (generator role) and Critic (evaluator role) are heterogeneous, not identical debaters.
+**How to embed:** The llm-language pipeline uses DMAD: Producer (generator role) and Critic (evaluator role) are heterogeneous, not identical debaters.
 
 ---
 
@@ -226,7 +226,7 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **When to apply:** When standard debate produces groupthink. Assign distinct perspectives/roles to each agent.
 
-**How to embed:** In slave-language, the Producer focuses on *generation quality* while the Critic focuses on *evaluation accuracy*. They have different rubrics and different success criteria.
+**How to embed:** In llm-language, the Producer focuses on *generation quality* while the Critic focuses on *evaluation accuracy*. They have different rubrics and different success criteria.
 
 ---
 
@@ -246,9 +246,9 @@ Reference for the slave-language skill. Each principle includes: citation, when 
 
 **How to embed:**
 ```xml
-<slave-prompt thinking="ultrathink">
+<llm-prompt thinking="ultrathink">
   <!-- The thinking attribute signals maximum reasoning depth -->
-</slave-prompt>
+</llm-prompt>
 ```
 
 ---

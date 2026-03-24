@@ -1,12 +1,12 @@
 {
-  "name": "slave-language",
+  "name": "llm-language",
   "owner": {
     "name": "Andre",
     "url": "https://github.com/Silence-view"
   },
   "plugins": [
     {
-      "name": "slave-language",
+      "name": "llm-language",
       "source": "./",
       "description": "Prompt meta-compiler with multi-agent debate and scientific optimization for Opus 4.6",
       "version": "1.0.0"

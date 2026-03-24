@@ -1,6 +1,6 @@
 # Bibliography
 
-Full academic references underpinning the `slave-language` prompt meta-compiler, organized by category.
+Full academic references underpinning the `llm-language` prompt meta-compiler, organized by category.
 
 ---
 
@@ -132,4 +132,4 @@ The surveys by Schulhoff et al. (2024, ref. 35) and Sahoo et al. (2024, ref. 39)
 - Multi-modal Chain-of-Thought
 - Faithful Chain-of-Thought
 
-These are documented within the respective surveys and inform the Decision Matrix in [`skills/slave-language/references/scientific-principles.md`](../skills/slave-language/references/scientific-principles.md).
+These are documented within the respective surveys and inform the Decision Matrix in [`skills/llm-language/references/scientific-principles.md`](../skills/llm-language/references/scientific-principles.md).
