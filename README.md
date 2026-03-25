@@ -515,6 +515,17 @@ Contributions welcome. Priority areas:
 
 Built on foundational research by Wei et al. (CoT), Yao et al. (ToT), Madaan et al. (Self-Refine), Du et al. (MAD), Hannah et al. (PersonalLLM), Agarwal et al. (PromptWizard), and Anthropic's Claude prompting guidelines. Context engineering methodology from arXiv:2602.20478 (Codified Context). Full bibliography in [`docs/BIBLIOGRAPHY.md`](docs/BIBLIOGRAPHY.md).
 
+---
+
+## Star History
+
+If you find llm-language useful, a star helps others discover it.
+
+---
+
 <p align="center">
-  <sub>Made with ultrathink by Andrea Nardello</sub>
+  <strong>llm-language</strong> — stop engineering prompts, start engineering outcomes.
+</p>
+<p align="center">
+  <sub>Built by <a href="https://github.com/Silence-view">Andrea Nardello</a> | UCL Computer Science</sub>
 </p>
