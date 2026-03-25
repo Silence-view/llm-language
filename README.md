@@ -1,7 +1,12 @@
 <p align="center">
   <h1 align="center">llm-language</h1>
   <p align="center">
-    <strong>Scientifically-grounded prompt meta-compiler for Claude Code</strong>
+    <strong>The translation layer between human intent and machine execution</strong>
+  </p>
+  <p align="center">
+    <em>Like the Rosetta Stone decoded hieroglyphs for the modern world,<br>
+    llm-language decodes your intent for Claude — so you think less about how to ask<br>
+    and more about what to build.</em>
   </p>
   <p align="center">
     <a href="#installation"><img alt="Claude Code Plugin" src="https://img.shields.io/badge/Claude_Code-Plugin-6B4FBB?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0id2hpdGUiLz48L3N2Zz4="></a>
@@ -12,9 +17,9 @@
     <img alt="Threshold" src="https://img.shields.io/badge/threshold-9.2%2F10-yellow?style=flat-square">
   </p>
   <p align="center">
-    Multi-agent prompt optimization with Jarvis proactive mode, mandatory codebase awareness,<br>
-    ROSETTA.md adaptive memory, and 110+ scientific papers.<br>
-    Specialized for Claude Opus 4.6 with ultrathink.
+    Proactive workflow intelligence with Jarvis mode, codebase-aware context engineering,<br>
+    adaptive memory via ROSETTA.md, and 110+ scientific papers.<br>
+    Your intent in, your project understood, maximum results out.
   </p>
 </p>
 
@@ -44,7 +49,11 @@
 
 ## Why llm-language?
 
-You type a vague 5-word prompt. Claude produces something generic. **llm-language transforms that prompt** into a structured, codebase-grounded, scientifically-optimized XML blueprint — then executes it at maximum reasoning depth.
+> *The Rosetta Stone (196 BC) bore the same decree in three scripts — hieroglyphic, demotic, and Greek — enabling scholars to finally decode a language that had been opaque for millennia. **ROSETTA.md** does the same for your intent: it translates between how you think (vague, contextual, implicit) and how Claude works best (structured, explicit, grounded in your actual project). The more you use it, the better the translation becomes.*
+
+**This is not a prompt engineering tool.** Prompt engineering is a skill you learn. llm-language is an **intelligence layer** that sits between you and Claude Code, ensuring that every interaction leverages the full power of the model — your project context, your working patterns, your accumulated preferences — without you having to think about it.
+
+You type 5 vague words. llm-language understands your project, your history, and your intent — then produces the structured, grounded execution plan that gets the best possible result.
 
 ```
 Before:  "progetta un trading system"  (5 words, zero context)
@@ -181,6 +190,8 @@ Vuoi che proceda, o preferisci altro?
 ---
 
 ## ROSETTA.md — Persistent Memory
+
+> *Named after the [Rosetta Stone](https://en.wikipedia.org/wiki/Rosetta_Stone) — the artifact that bridged the gap between human understanding and an otherwise opaque writing system. ROSETTA.md bridges the gap between your cognitive patterns and Claude's execution model. Each interaction adds another line to the translation — your preferences, your corrections, your workflows — until the system speaks your language natively.*
 
 ROSETTA.md (`~/.claude/ROSETTA.md`) is a self-evolving document that captures what works for **you specifically**.
 
