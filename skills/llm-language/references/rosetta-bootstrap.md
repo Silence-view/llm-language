@@ -74,6 +74,28 @@ Approaches that failed, were corrected by the user, or scored poorly.
 
 ---
 
+## Skill & Agent Usage
+
+### Most Used Skills
+<!-- Track which /skill-name commands the user invokes most often -->
+| Skill | Times Used | Last Used | Notes |
+|---|---|---|---|
+| (populated automatically) | | | |
+
+### Preferred Agents
+<!-- Track which agents produce results the user is most satisfied with -->
+| Agent | Times Dispatched | Avg Satisfaction | Notes |
+|---|---|---|---|
+| (populated automatically) | | | |
+
+### Tool Preferences
+<!-- Which tools the user prefers or asks for explicitly -->
+| Tool | Frequency | Context | Notes |
+|---|---|---|---|
+| (populated automatically) | | | |
+
+---
+
 ## Domain Context
 
 ### Active Projects

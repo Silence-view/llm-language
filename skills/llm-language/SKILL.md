@@ -1,22 +1,22 @@
 ---
 name: llm-language
 version: "2.0"
+user-invocable: true
 description: >
-  Use when receiving ANY user message, task, or prompt that requires
-  execution. Invoke BEFORE any other action to re-engineer the prompt
-  through multi-agent debate with scientific optimization. Triggers on:
-  code requests, analysis, research, creative tasks, debugging, design,
-  refactoring, writing. Also triggers on "llm-language", "optimize
-  prompt", "re-engineer prompt", "massima precisione", "maximum quality".
-  Skip only for greetings or when user says "skip llm-language".
-  Opus 4.6 + ultrathink. Self-evolving via ROSETTA.md memory.
+  Use when user explicitly invokes "/llm-language" or says "llm-language",
+  "optimize prompt", "re-engineer prompt", "massima precisione", "maximum
+  quality", "ottimizza il prompt". This skill re-engineers the user's
+  prompt through multi-agent debate with scientific optimization,
+  ROSETTA.md adaptive memory, web deep research, and full skill access.
+  Opus 4.6 + ultrathink. NOTE: ROSETTA.md is updated passively in the
+  background to learn user style even when the skill is NOT invoked.
 ---
 
 # llm-language v2.0
 
 ## Overview
 
-A self-evolving prompt meta-compiler that intercepts user messages, re-engineers them through a multi-agent debate process grounded in 100+ scientific papers, and produces optimized XML-structured prompts for Claude Opus 4.6 with ultrathink. The system maintains persistent memory via **ROSETTA.md** — a living document that captures what works for this specific user, evolving after every execution to continuously improve output quality.
+A self-evolving prompt meta-compiler that re-engineers user messages through a multi-agent debate process grounded in 100+ scientific papers, producing optimized XML-structured prompts for Claude Opus 4.6 with ultrathink. The system maintains persistent memory via **ROSETTA.md** — a living document that captures what works for this specific user, evolving after every interaction to continuously improve output quality.
 
 **Core cycle:** ROSETTA Load → Intake → Generate → Critique → Revise → Execute → ROSETTA Update
 
@@ -28,9 +28,11 @@ A self-evolving prompt meta-compiler that intercepts user messages, re-engineers
 
 ## When to Use
 
-**ALWAYS.** Applies to every user message except:
-- Purely conversational ("hello", "thanks")
-- Explicit skip ("skip llm-language", "raw mode")
+**Only when explicitly invoked.** The full pipeline runs on:
+- `/llm-language` command
+- User says "llm-language", "optimize prompt", "massima precisione", "maximum quality"
+
+**ROSETTA.md updates happen passively** — even when the skill is NOT invoked, ROSETTA.md should be updated at session boundaries to capture user style signals (language preference, communication patterns, domain context). This is handled by the ROSETTA Passive Update mechanism (see Phase 6b).
 
 ---
 
@@ -77,9 +79,19 @@ Before proceeding, evaluate: is the user's intent clear enough to generate a hig
 - Are there critical missing details that would change the approach?
 - Does ROSETTA.md context resolve the ambiguity?
 
-**If uncertainty is HIGH and cannot be resolved by ROSETTA.md context:** use `AskUserQuestion` to ask 1-3 targeted clarifying questions. Do NOT ask obvious questions — only ask when the answer would materially change the generated prompt.
+**If uncertainty is HIGH and cannot be resolved by ROSETTA.md context:**
 
-**If uncertainty is LOW or ROSETTA.md resolves it:** proceed without interrupting the user.
+1. First, calculate HOW MANY questions you'd need for an excellent result (N). Consider:
+   - Number of ambiguous aspects in the user's message
+   - Number of critical decisions that depend on user preference
+   - How much ROSETTA.md already covers
+2. Use `AskUserQuestion` to present the user with a recommendation:
+   - "Per un risultato ottimale servirebbero N domande di chiarimento. Quante vuoi che te ne faccia?"
+   - Options: "Tutte (N) — massima precisione", "Solo le top 2-3 — bilanciato", "Zero — procedi con le tue assunzioni"
+3. Ask ONLY the number of questions the user approved, ordered by impact (highest-impact first)
+4. Do NOT ask obvious questions — only ask when the answer would materially change the generated prompt
+
+**If uncertainty is LOW or ROSETTA.md resolves it:** proceed without interrupting the user. ROSETTA.md preferences have priority over asking — if the answer is already in ROSETTA, don't ask again.
 
 **1.5 Select Scientific Principles**
 
@@ -267,6 +279,20 @@ The generated XML prompt is NOT saved to any file. It lives only in conversation
 5. NEVER delete the core structure (sections must persist)
 
 **ROSETTA update is SILENT** — do not tell the user you are updating it. Just do it after every execution.
+
+### Phase 6b: ROSETTA PASSIVE UPDATE (runs even WITHOUT skill invocation)
+
+Even when llm-language is NOT explicitly invoked, the system should update ROSETTA.md to passively learn the user's style. This happens at natural session boundaries or when significant user signals are detected:
+
+1. **Language preference**: detect from user messages (Italian, English, mixed)
+2. **Communication style**: terse vs detailed, formal vs casual
+3. **Skills frequently invoked**: track which `/skill-name` commands the user calls most often
+4. **Agents frequently dispatched**: track which agents are used most
+5. **Domain patterns**: what projects/topics recur across sessions
+6. **Correction patterns**: when the user corrects Claude's output, capture what was wrong
+7. **Tool preferences**: which tools the user asks to use (Bash, Read, WebSearch, etc.)
+
+Update the relevant ROSETTA.md sections silently. This is lightweight — just a few lines appended to existing tables.
 
 ---
 
