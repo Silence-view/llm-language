@@ -106,6 +106,24 @@ Full academic references underpinning the `llm-language` prompt meta-compiler, o
 
 43. GAAPO. (2025). Genetic Algorithmic Applied to Prompt Optimization. *Frontiers in Artificial Intelligence*, 8, 1613007.
 
+## I. Adaptive Memory & User Modeling (v2.0)
+
+44. Hannah, R., et al. (2025). PersonalLLM: Tailoring LLMs to Individual Preferences. *Proceedings of the International Conference on Learning Representations (ICLR)*.
+
+45. Agarwal, E., Singh, J., Dani, V., Magazine, R., Ganu, T., & Nambi, A. (2024). PromptWizard: Task-Aware Agent-driven Prompt Optimization Framework. *Microsoft Research*. arXiv:2405.18369.
+
+46. Chen, Y., Arkin, J., Hao, Y., Zhang, Y., Roy, N., & Fan, C. (2024). PRompt Optimization in Multi-Step Tasks (PROMST): Integrating Human Feedback and Heuristic-based Sampling. *Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP)*. (Oral, Top 3%).
+
+47. PLUM. (2025). On the Way to LLM Personalization: Learning to Remember User Conversations. *Proceedings of the Association for Computational Linguistics (ACL)*.
+
+48. Zhang, Y., et al. (2025). Memory in Large Language Models: Mechanisms, Evaluation and Evolution. *arXiv preprint arXiv:2509.18868*.
+
+49. Survey on the Memory Mechanism of Large Language Model-based Agents. (2025). *ACM Transactions on Information Systems (TOIS)*.
+
+50. Nemori. (2025). Self-Organizing Episodic Memory with Prediction-Calibration Loops for LLM Agents.
+
+51. Memory Assisted LLM for Personalized Recommendation System (MAP). (2025). *arXiv preprint arXiv:2505.03824*.
+
 ---
 
 ## Additional References (from comprehensive surveys)

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Critic agent evaluates generated XML prompts on 6 dimensions. Each dimension is scored 1-10 using the anchored scale below. The weighted score determines whether revision is needed.
+The Critic agent evaluates generated XML prompts on 7 dimensions. Each dimension is scored 1-10 using the anchored scale below. The weighted score determines whether revision is needed.
 
 ## Convergence Criteria
 
@@ -109,12 +109,33 @@ Are appropriate prompt engineering techniques applied to the task type?
 
 ---
 
+### 7. User-Fit Alignment (Weight: 0.10) — NEW in v2.0
+
+Does the prompt leverage ROSETTA.md insights to align with this specific user's preferences?
+
+| Score | Anchor |
+|---|---|
+| 2 | ROSETTA.md context completely ignored. Generic prompt with no personalization. |
+| 4 | ROSETTA.md was referenced but insights not applied. |
+| 6 | Some ROSETTA patterns applied. User preferences partially reflected. |
+| 8 | Key ROSETTA patterns applied. Output format, style, and approach match known user preferences. Prior effective techniques reused where applicable. |
+| 10 | Deep ROSETTA integration. Preferences, anti-patterns, domain context, and prior effective techniques all reflected. Prompt anticipates user needs based on accumulated history. |
+
+**Red flags:** Using techniques ROSETTA lists as anti-patterns. Ignoring known output format preferences. Not leveraging domain context from ROSETTA when the topic matches. If ROSETTA.md is empty (new user), score 7 by default — no penalty for lack of history.
+
+**Special case:** If ROSETTA.md does not exist or has zero interactions, default score is 7 (neutral). The dimension becomes meaningful after 3+ interactions.
+
+---
+
 ## Weighted Score Calculation
 
 ```
-weighted_score = (intent * 0.25) + (precision * 0.20) + (completeness * 0.20)
-               + (structure * 0.15) + (opus_opt * 0.10) + (scientific * 0.10)
+weighted_score = (intent * 0.20) + (precision * 0.18) + (completeness * 0.18)
+               + (structure * 0.14) + (opus_opt * 0.10) + (scientific * 0.10)
+               + (user_fit * 0.10)
 ```
+
+**Weight changes from v1.0:** Intent reduced 0.25→0.20, Precision 0.20→0.18, Completeness 0.20→0.18, Structure 0.15→0.14. This creates room for User-Fit (0.10) while keeping the total at 1.00.
 
 ## Critic Output Format
 
@@ -144,7 +165,15 @@ The Critic agent MUST output its evaluation in this exact structure:
     <dimension name="scientific-grounding" score="8" weight="0.10">
       Evidence: [...]
     </dimension>
+    <dimension name="user-fit-alignment" score="7" weight="0.10">
+      Evidence: [ROSETTA patterns applied or not]
+      Issue: [if score < 8, what ROSETTA insights were missed]
+    </dimension>
   </scores>
+
+  <needs-clarification>
+    <!-- Only if a CRITICAL ambiguity exists that neither prompt nor ROSETTA resolves -->
+  </needs-clarification>
 
   <weighted-score>7.85</weighted-score>
   <verdict>revise|accept</verdict>

@@ -8,8 +8,8 @@
     {
       "name": "llm-language",
       "source": "./",
-      "description": "Prompt meta-compiler with multi-agent debate and scientific optimization for Opus 4.6",
-      "version": "1.0.0"
+      "description": "Self-evolving prompt meta-compiler with ROSETTA.md memory, multi-agent debate, web research, and 110+ scientific papers for Opus 4.6",
+      "version": "2.0.0"
     }
   ]
 }

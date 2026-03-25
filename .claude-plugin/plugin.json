@@ -1,5 +1,5 @@
 {
   "name": "llm-language",
-  "version": "1.0.0",
-  "description": "Prompt meta-compiler that re-engineers every user message through multi-agent debate grounded in 100+ scientific papers, producing optimized XML prompts for Claude Opus 4.6 with ultrathink."
+  "version": "2.0.0",
+  "description": "Self-evolving prompt meta-compiler with ROSETTA.md persistent memory, multi-agent debate, web deep research, and 100+ scientific papers. Produces optimized XML prompts for Claude Opus 4.6 with ultrathink."
 }

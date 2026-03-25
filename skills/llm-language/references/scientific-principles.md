@@ -313,6 +313,64 @@ Reference for the llm-language skill. Each principle includes: citation, when to
 
 ---
 
+## Category H: Adaptive Memory & User Modeling (v2.0)
+
+### H1. Episodic Memory for LLM Agents
+
+**Citation:** Zhang et al., "Memory in Large Language Models: Mechanisms, Evaluation and Evolution," arXiv 2025. Survey: ACM TOIS 2025.
+
+**When to apply:** Always — via ROSETTA.md. Episodic memory is a persistent state written at inference time that systematically influences model outputs.
+
+**How to embed:** ROSETTA.md captures interaction episodes (technique used, score, user response) and feeds them back into subsequent prompts as `<rosetta-context>`.
+
+---
+
+### H2. Preference Learning & Personalization
+
+**Citation:** Hannah et al., "PersonalLLM: Tailoring LLMs to Individual Preferences," ICLR 2025. Survey: "A Survey of Personalized Large Language Models," arXiv 2502.11528, 2025.
+
+**When to apply:** Always — the system accumulates interaction data to provide maximal benefits for this individual user. Preferences are inferred from corrections, satisfaction signals, and explicit feedback.
+
+**Key insight:** A personalized model should adapt to the preferences and needs of a particular user and provide maximal benefits as it accumulates interactions.
+
+---
+
+### H3. Self-Evolving Prompt Optimization
+
+**Citation:** Agarwal et al., "PromptWizard: Task-Aware Agent-driven Prompt Optimization Framework," Microsoft Research, arXiv:2405.18369, 2024.
+
+**When to apply:** Core mechanism of llm-language v2.0. The system iteratively generates, critiques, and refines prompts through feedback-driven synthesis, with learnings persisted across sessions via ROSETTA.md.
+
+**Key insight:** PromptWizard achieved superior performance across 45 tasks through self-evolving feedback loops. Our ROSETTA.md extends this to cross-session persistence.
+
+---
+
+### H4. Human Feedback Integration for Prompt Optimization
+
+**Citation:** Chen et al., "PROMST: PRompt Optimization in Multi-Step Tasks," EMNLP 2024 (Oral, Top 3%).
+
+**When to apply:** When the user provides corrections or feedback that should inform future prompt generation. ROSETTA.md captures these signals.
+
+**Key insight:** Human-designed feedback rules automatically offer direct suggestions for improvement, achieving 10-29% gains over baseline methods.
+
+---
+
+### H5. Cross-Session Personalization
+
+**Citation:** PLUM (ACL 2025): "On the Way to LLM Personalization: Learning to Remember User Conversations."
+
+**When to apply:** Every session — ROSETTA.md IS the cross-session memory. It enables the system to personalize by remembering prior conversation patterns, even across restarts.
+
+---
+
+### H6. Reflective Memory Management
+
+**Citation:** RMM framework, Survey on Memory Mechanisms in LLM-Based Agents, 2025.
+
+**When to apply:** When ROSETTA.md approaches its size limit (300 lines). RMM constructs memory at adaptive granularities and refines retrieval using feedback from response citations. We apply this by consolidating older ROSETTA entries — merging similar patterns, removing outdated ones.
+
+---
+
 ## Quick Decision Matrix
 
 | Task Type | Primary Technique | Secondary | Thinking Level |
@@ -322,10 +380,11 @@ Reference for the llm-language skill. Each principle includes: citation, when to
 | Ambiguous/creative | ToT | DMAD | ultrathink |
 | Code generation | Decomposition | Self-Refine | extended |
 | Architecture/design | ToT + Decomposition | Reflexion | ultrathink |
-| Analysis/research | CoT + Retrieval-Aug | Calibration | ultrathink |
-| Writing/editing | Role + Self-Refine | Few-shot | extended |
+| Analysis/research | CoT + Retrieval-Aug + WebSearch | Calibration | ultrathink |
+| Writing/editing | Role + Self-Refine | Few-shot + ROSETTA | extended |
 | Debugging | Reflexion + CoT | Adversarial | extended |
 | Complex multi-part | Least-to-Most + DecomP | Meta-Prompting | ultrathink |
+| Returning user topic | ROSETTA-guided | Prior effective technique | extended+ |
 
 ---
 
@@ -361,5 +420,13 @@ The principles above synthesize findings from the following major works and surv
 26. SwarmPrompt (2025) — Swarm Intelligence for Prompt Optimization
 27. CFPO (2025) — Content-Format Integrated Prompt Optimization
 28. GAAPO (2025) — Genetic Algorithm Applied to Prompt Optimization
+29. Hannah et al. (2025) — PersonalLLM: Tailoring LLMs to Individual Preferences, ICLR
+30. Agarwal et al. (2024) — PromptWizard: Task-Aware Prompt Optimization, Microsoft Research
+31. Chen et al. (2024) — PROMST: PRompt Optimization in Multi-Step Tasks, EMNLP (Oral, Top 3%)
+32. PLUM (2025) — Cross-Session Personalization via Conversation Memory, ACL
+33. Zhang et al. (2025) — Memory in LLMs: Mechanisms, Evaluation and Evolution, arXiv
+34. RMM (2025) — Reflective Memory Management for LLM Agents
+35. Nemori (2025) — Self-Organizing Episodic Memory with Prediction-Calibration Loops
+36. Survey on Memory Mechanisms in LLM-Based Agents (2025) — ACM TOIS
 
 Plus 72+ additional papers referenced in the surveys by Schulhoff et al. (2024), Li et al. (2025), and the TechRxiv comprehensive survey (2025), covering: retrieval-augmented prompting, active prompting, directional stimulus prompting, program-aided language models, graph-of-thought, skeleton-of-thought, analogical prompting, emotion prompting, rephrase-and-respond, step-back prompting, contrastive CoT, thread-of-thought, and more.
