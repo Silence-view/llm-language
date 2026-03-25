@@ -498,7 +498,7 @@ Contributions welcome. Priority areas:
 @software{llm_language_2026,
   title     = {llm-language: A Scientifically-Grounded Prompt Meta-Compiler
                with Proactive Workflow Anticipation for Claude Code},
-  author    = {Andre},
+  author    = {Andrea Nardello},
   year      = {2026},
   url       = {https://github.com/Silence-view/llm-language},
   version   = {3.2.0},
@@ -516,5 +516,5 @@ Contributions welcome. Priority areas:
 Built on foundational research by Wei et al. (CoT), Yao et al. (ToT), Madaan et al. (Self-Refine), Du et al. (MAD), Hannah et al. (PersonalLLM), Agarwal et al. (PromptWizard), and Anthropic's Claude prompting guidelines. Context engineering methodology from arXiv:2602.20478 (Codified Context). Full bibliography in [`docs/BIBLIOGRAPHY.md`](docs/BIBLIOGRAPHY.md).
 
 <p align="center">
-  <sub>Made with ultrathink by Andre — UCL COMP0051</sub>
+  <sub>Made with ultrathink by Andrea Nardello — UCL COMP0051</sub>
 </p>
