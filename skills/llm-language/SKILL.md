@@ -19,7 +19,7 @@ description: >
 
 A self-evolving prompt meta-compiler that re-engineers user messages through a multi-agent debate process grounded in 100+ scientific papers, producing optimized XML-structured prompts for Claude Opus 4.6 with ultrathink. The system maintains persistent memory via **ROSETTA.md** and **mandatory codebase awareness** — reading the actual project before generating prompts, ensuring every output is grounded in reality.
 
-**Core cycle:** ROSETTA Load → **Codebase Scan** → Intake → Generate → Critique → Revise → Execute → ROSETTA Update
+**Core cycle:** ROSETTA Load → **Codebase Scan** → **CLAUDE.md Check** → Intake → Generate → Critique → Revise → Execute → ROSETTA Update
 
 **New in v3.0:**
 - **MANDATORY codebase awareness** — Producer reads CLAUDE.md + key files before generating (P0)
@@ -29,6 +29,7 @@ A self-evolving prompt meta-compiler that re-engineers user messages through a m
 - **Critic anchor at 5** — starts at 5/10 and justifies upward (was 7), reducing inflation
 - **Context mismatch detection** — flags when the request doesn't match the current project
 - **File content awareness** — reads target file content, not just paths, to detect existing work
+- **CLAUDE.md auto-maintenance** — generates/updates CLAUDE.md on first invocation per project, following WHY-WHAT-HOW structure and Codified Context methodology (arxiv:2602.20478)
 - Deep research via WebSearch, full skill access, ROSETTA.md adaptive memory (from v2.0)
 
 ## When to Use
@@ -93,6 +94,103 @@ Scan the current project to build a `<codebase-context>` block:
    - If content exists: frame the task as "revise/extend" not "create from scratch"
 
 The `<codebase-context>` block is passed to ALL subsequent agents alongside `<rosetta-context>`.
+
+### Phase 0.6: CLAUDE.md MAINTENANCE (inline, first invocation per project)
+
+**On the FIRST invocation in a project that has no CLAUDE.md, or when the existing CLAUDE.md is stale (>30 days since last update), generate or refresh it.**
+
+This phase implements the "Codified Context" methodology (arxiv:2602.20478) — treating CLAUDE.md as load-bearing documentation that AI agents depend on for correct output.
+
+#### When to Generate (from scratch)
+
+If no CLAUDE.md exists in the project root:
+
+1. **Scan the project** using Phase 0.5 data (already collected):
+   - Entry points, config files, directory structure
+   - Package manager files (package.json, pyproject.toml, requirements.txt, Cargo.toml)
+   - Test configuration and commands
+   - Git history for recent activity patterns
+
+2. **Generate CLAUDE.md** following the WHY-WHAT-HOW structure (Anthropic 2026):
+
+   ```markdown
+   # {Project Name} — {One-line description}
+
+   {2-3 sentence project summary: what it does, why it exists}
+
+   ## Commands
+   ```bash
+   # Build/run
+   {detected from package.json scripts, Makefile, pyproject.toml}
+
+   # Test
+   {detected from test framework config}
+
+   # Lint/format
+   {detected from linter config}
+   ```
+
+   ## Architecture
+   {Module map: which directories/files do what, data flow}
+
+   ## Conventions
+   {Code style, naming, testing patterns — inferred from existing code}
+
+   ## Critical Invariants
+   {Things that MUST NOT break — inferred from test assertions and comments}
+
+   ## What NOT to Do
+   {Anti-patterns specific to this project}
+   ```
+
+3. **Keep it under 200 lines** — use progressive disclosure:
+   - Main CLAUDE.md: high-level (commands, architecture, invariants)
+   - Detailed docs in separate files referenced with @path/to/file.md
+
+4. **Present to user for review** before writing — never auto-commit
+
+#### When to Update (existing CLAUDE.md)
+
+If CLAUDE.md exists but is stale (detected via git log on the file):
+
+1. **Diff analysis**: compare CLAUDE.md content against current codebase state
+   - Are commands still valid? (run them to check)
+   - Are file paths still correct? (Glob to verify)
+   - Are invariants still documented? (check test files)
+   - Are new modules/features missing from the architecture section?
+
+2. **Incremental update**: propose specific edits (not full rewrite)
+   - Add new modules/commands discovered
+   - Remove references to deleted files
+   - Update invariants based on new test patterns
+   - Flag sections that may be outdated
+
+3. **Staleness detection heuristic**:
+   - Count commits since CLAUDE.md last modified
+   - If > 50 commits or > 30 days: flag for review
+   - If new directories or entry points added: flag for update
+
+#### CLAUDE.md Quality Principles (from research)
+
+Based on 50+ sources (HumanLayer 2026, Anthropic Official, Codified Context arxiv:2602.20478, EclipseSource 2025):
+
+1. **Conciseness is critical**: LLMs handle ~150-200 instructions reliably; Claude Code's system prompt already uses ~50. Target < 200 lines.
+2. **WHY-WHAT-HOW structure**: Project purpose → tech stack/architecture → development workflows
+3. **Progressive disclosure**: Keep task-specific docs in separate files, reference with @path
+4. **No sensitive data**: Treat as public documentation (no API keys, credentials, connection strings)
+5. **No style rules**: Use linters/formatters instead — LLMs are expensive and slow for style enforcement
+6. **File:line pointers, not code snippets**: Snippets go stale; file references stay current
+7. **Iterate continuously**: Treat as living document, not one-time setup
+8. **Test your commands**: Every command in CLAUDE.md should actually work when run
+9. **Invariants > conventions**: Focus on things that break if violated, not preferences
+10. **Human-curated, AI-assisted**: AI generates the draft; human validates and curates
+
+#### Skipping This Phase
+
+Skip if:
+- CLAUDE.md was updated within the last 7 days (< 50 commits since)
+- The user explicitly says "skip CLAUDE.md update"
+- The current task is simple complexity
 
 ### Phase 1: INTAKE (inline, no subagent)
 
