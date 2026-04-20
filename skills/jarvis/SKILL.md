@@ -1,12 +1,15 @@
 ---
 name: jarvis
-version: "1.0"
+version: "2.0"
 user-invocable: true
+effort: high
 description: >
-  Proactive AI assistant mode for Claude Code. Anticipates next steps,
-  auto-invokes relevant skills, and learns user workflow patterns over time.
-  Three evolutionary phases: Observation (sessions 1-10), Anticipation (11-30),
-  Autonomous (30+). Explicitly opt-in via "/llm-language:jarvis". WARNING:
+  Proactive AI assistant mode for Claude Code targeting Opus 4.7. Anticipates
+  next steps, auto-invokes relevant skills, and learns user workflow patterns
+  via ROSETTA + auto-memory dual-layer. Three evolutionary phases: Observation
+  (1-10), Anticipation (11-30), Autonomous (30+). v2.0 adds background plugin
+  monitors integration, push notifications, and Agent Teams mode proposals for
+  cross-cutting tasks. Explicitly opt-in via "/llm-language:jarvis". WARNING:
   this mode is invasive — it reads, plans, and acts beyond what was explicitly
   asked. Use only when you want Claude Code at maximum proactivity.
 ---
@@ -252,6 +255,9 @@ Jarvis invokes skills BEFORE the user asks, but only when the pattern is clear:
 ### ROSETTA.md § Jarvis Patterns (dedicated section)
 All Jarvis data lives in a dedicated ROSETTA section. See the ROSETTA update below for structure.
 
+### Auto-Memory (v2.0 NEW — project-level patterns)
+Jarvis writes project-specific workflow patterns to `~/.claude/projects/<project>/memory/` with `type: project` frontmatter, distinguishing from user-level patterns in ROSETTA.
+
 ### /llm-language:update
 Jarvis checks for updates periodically and proposes new skills/plugins when they match observed workflow gaps.
 
@@ -260,6 +266,26 @@ When Jarvis detects significant codebase changes (new modules, new tests, change
 
 ### Standard llm-language pipeline
 Jarvis uses the full pipeline (Phase 0-6) for every task. The anticipation layer wraps AROUND the pipeline, not inside it.
+
+### v2.0 NEW — Background Plugin Monitors
+
+Jarvis can register as a plugin monitor via top-level `monitors` manifest key (Claude Code v2.1.100+) — auto-arms at session start. Enables passive observation WITHOUT requiring explicit `/llm-language:jarvis` invocation each session.
+
+### v2.0 NEW — Push Notifications
+
+In autonomous mode (Phase 3), Jarvis sends push notifications via "Push when Claude decides" config when: autonomous action executed, confidence dropped below threshold, or marketplace discovered relevant new skill.
+
+### v2.0 NEW — Agent Teams Mode
+
+When Jarvis detects an adversarial + cross-cutting task pattern (security review, full-stack feature, debugging with competing hypotheses), propose Agent Teams mode. Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. Only propose when pattern genuinely benefits from peer-to-peer coordination (MAD literature warns against overuse on strong models).
+
+### v2.0 NEW — Opus 4.7 Proactive Adjustments
+
+Opus 4.7 spawns fewer subagents and follows instructions literally. Jarvis adjusts:
+- More explicit subagent directives when anticipating parallel work
+- Concise one-line persona framing
+- Remove redundant emphasis markers from proposals
+- Suggest `effort: xhigh` + `task_budget: 200k` as default for long autonomous runs
 
 ---
 

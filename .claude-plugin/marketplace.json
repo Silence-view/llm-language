@@ -8,8 +8,8 @@
     {
       "name": "llm-language",
       "source": "./",
-      "description": "Self-evolving prompt meta-compiler with ROSETTA.md memory, multi-agent debate, web research, and 110+ scientific papers for Opus 4.6",
-      "version": "2.0.0"
+      "description": "Opus 4.7 native prompt meta-compiler: xhigh/max effort, adaptive thinking, task budgets, dual-layer memory (ROSETTA + auto-memory), Buffer-of-Thoughts, Meta-Reasoner bandit, 125+ scientific papers",
+      "version": "4.0.0"
     }
   ]
 }

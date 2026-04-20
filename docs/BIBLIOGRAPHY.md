@@ -148,6 +148,122 @@ The surveys by Schulhoff et al. (2024, ref. 35) and Sahoo et al. (2024, ref. 39)
 - STaR (Self-Taught Reasoner)
 - Least-to-Most with Self-Consistency
 - Multi-modal Chain-of-Thought
+
+---
+
+## J. v4.0 Additions (2026 — Opus 4.7 era)
+
+### Anthropic Official Documentation (2026)
+
+52. Anthropic. (2026). Introducing Claude Opus 4.7. *Anthropic News*, April 16, 2026. https://www.anthropic.com/news/claude-opus-4-7
+
+53. Anthropic. (2026). What's new in Claude Opus 4.7. *Claude API Documentation*. https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-7
+
+54. Anthropic. (2026). Effort Parameter. *Claude API Documentation*. https://platform.claude.com/docs/en/build-with-claude/effort
+
+55. Anthropic. (2026). Adaptive Thinking. *Claude API Documentation*. https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking
+
+56. Anthropic. (2026). Task Budgets (beta). *Claude API Documentation*. https://platform.claude.com/docs/en/build-with-claude/task-budgets
+
+57. Anthropic. (2026). Memory Tool. *Claude API Documentation*. https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool
+
+58. Anthropic. (2026). How Claude Remembers Your Project. *Claude Code Documentation*. https://code.claude.com/docs/en/memory
+
+59. Anthropic. (2026). Migrating to Claude Opus 4.7. *Claude API Documentation*.
+
+60. Anthropic. (2026). Effective Harnesses for Long-Running Agents. *Anthropic Engineering Blog*.
+
+61. Anthropic. (2026). Effective Context Engineering for AI Agents. *Anthropic Engineering Blog*.
+
+62. Anthropic. (2026). Claude Code Changelog v2.1.69–v2.1.111 (PreCompact hook, plugin monitors, Agent Teams, /ultrareview, /effort slider). https://code.claude.com/docs/en/changelog
+
+### New Reasoning Techniques (2026)
+
+63. Atom of Thoughts. (2026). Atom of Thoughts for Markov LLM Test-Time Scaling. *arXiv preprint arXiv:2502.12018*.
+
+64. Yang, L., Yu, Z., Zhang, T., Liu, S., Xu, M., Ermon, S., & Cui, B. (2024). Buffer of Thoughts: Thought-Augmented Reasoning with Large Language Models. *Advances in Neural Information Processing Systems (NeurIPS) Spotlight*. arXiv preprint arXiv:2406.04271.
+
+65. Adaptive Graph of Thoughts (AGoT). (2026). Selectively Expanding Uncertain Subproblems. *arXiv preprint arXiv:2502.05078*.
+
+66. Meta-Reasoner. (2026). Dynamic Guidance for Optimized Inference-time Reasoning in LLMs. *arXiv preprint arXiv:2502.19918*.
+
+67. Domain-Specialized Tree of Thoughts (DST). (2026). *arXiv preprint arXiv:2603.20267*.
+
+68. DSPy 2026. (2026). Declarative Signatures with Compile-Time Optimizers. *arXiv preprint arXiv:2604.04869*.
+
+69. Error-Taxonomy-Guided Prompt Optimization. (2026). *arXiv preprint arXiv:2602.00997*.
+
+70. POaaS. (2026). Minimal-Edit Prompt Optimization for On-Device SLMs. *arXiv preprint arXiv:2603.16045*.
+
+71. Prompt Optimization Is a Coin Flip. (2026). Sobering findings on auto-optimization variance. *arXiv preprint arXiv:2604.14585*.
+
+72. Decreasing Value of CoT. (2025). Prompting Science Report 2. *arXiv preprint arXiv:2506.07142*.
+
+### Retrieval & Context (2026)
+
+73. A-RAG. (2026). Agentic Retrieval-Augmented Generation with Tool Granularity. *arXiv preprint arXiv:2602.03442*.
+
+74. Adaptive-RAG 2026. (2026). *arXiv preprint arXiv:2604.15621*.
+
+### Multi-Agent Debate Updates (2026)
+
+75. DynaDebate. (2026). Dynamic Debate Path Generation with Verification Agents.
+
+76. Debating Truth. (2025). Debate-Driven Claim Verification. *arXiv preprint arXiv:2507.19090*.
+
+### Memory Systems (2025-2026)
+
+77. Xu, W., et al. (2025). A-MEM: Agentic Memory for LLM Agents. *Advances in Neural Information Processing Systems (NeurIPS)*. arXiv preprint arXiv:2502.12110.
+
+78. Memory-R1. (2025). Reinforcement Learning for Memory Management in LLM Agents. *arXiv preprint arXiv:2508.19828*.
+
+79. ACON. (2026). Optimizing Context Compression for Long-running Agentic Workflows. *Proceedings of the International Conference on Learning Representations (ICLR)*.
+
+80. Memory in the Age of AI Agents. (2025). Survey. *arXiv preprint arXiv:2512.13564*.
+
+81. MemoryAgentBench / MemBench / MemoryArena. (2026). Benchmarks for agent memory. *arXiv preprint arXiv:2603.07670*.
+
+82. Reflective Memory Management for Long-Term Personalized Dialogue Agents. (2026). *Proceedings of the Association for Computational Linguistics (ACL)*.
+
+### Agent Frameworks (2026)
+
+83. OpenAI. (2026). Agents SDK with Handoff, Guardrails, and Responses API. https://openai.github.io/openai-agents-python/
+
+84. Google. (2026). Agent Development Kit (ADK) + Agent-to-Agent (A2A) Protocol v0.2. https://google.github.io/adk-docs
+
+85. Microsoft. (2026). Agent Framework (AutoGen/AG2 + Semantic Kernel merger, GA Q1 2026).
+
+86. CrewAI. (2026). Role + Goal + Backstory Multi-Agent Framework.
+
+87. LangGraph. (2026). State Machine with Immutable Checkpointed Memory. https://docs.langchain.com/oss/python/langgraph/overview
+
+88. DataCamp. (2026). Great AI Agent Showdown — Framework Cost/Quality Comparison.
+
+89. State of AI Agent Frameworks 2026. (2026). *Fordel Studios Research*.
+
+### Community & Ecosystem (2026)
+
+90. awesome-claude-code. (2026). Curated plugins/skills/hooks for Claude Code. https://github.com/hesreallyhim/awesome-claude-code
+
+91. Willison, S. (2026). System Prompt Changes Between Opus 4.6 and 4.7. *Personal Blog*.
+
+92. claude-mem. (2026). Alternative persistent memory plugin for Claude Code (46.1K stars). https://github.com/thedotmack/claude-mem
+
+93. Lushbinary. (2026). Claude Code Agent Teams: Multi-Agent Development Guide.
+
+94. MindStudio. (2026). Claude Code Auto-Memory Guide.
+
+### Agent Teams (Experimental, 2026)
+
+95. Anthropic. (2026). Orchestrate Teams of Claude Code Sessions (experimental, requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`). *Claude Code Documentation*.
+
+### Sobering Findings (for balance)
+
+96. Smit, T., et al. (2024). Should We Be Going MAD? A Look at Multi-Agent Debate Strategies for LLMs. *Proceedings of the International Conference on Machine Learning (ICML)*. [Finding: MAD overhead often exceeds gains on strong base models — use selectively]
+
+97. Meincke, L., Mollick, E. R., & Mollick, L. (2025). Prompting Science Report 4: Playing Pretend — Expert Personas Don't Improve Factual Accuracy. *SSRN Working Paper*. [Finding: role prompting works for style/register, NOT for factual accuracy]
+
+**Total v4.0 references: 125 primary + 72 surveyed = 197 sources**
 - Faithful Chain-of-Thought
 
 These are documented within the respective surveys and inform the Decision Matrix in [`skills/llm-language/references/scientific-principles.md`](../skills/llm-language/references/scientific-principles.md).

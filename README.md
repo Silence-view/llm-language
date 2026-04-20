@@ -11,14 +11,17 @@
   <p align="center">
     <a href="#installation"><img alt="Claude Code Plugin" src="https://img.shields.io/badge/Claude_Code-Plugin-6B4FBB?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0id2hpdGUiLz48L3N2Zz4="></a>
     <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square"></a>
-    <img alt="Version" src="https://img.shields.io/badge/version-3.2.0-blue?style=flat-square">
-    <img alt="Papers" src="https://img.shields.io/badge/papers-110+-orange?style=flat-square">
-    <img alt="Dimensions" src="https://img.shields.io/badge/scoring_dims-8-red?style=flat-square">
-    <img alt="Threshold" src="https://img.shields.io/badge/threshold-9.2%2F10-yellow?style=flat-square">
+    <img alt="Version" src="https://img.shields.io/badge/version-4.0.0-blue?style=flat-square">
+    <img alt="Target" src="https://img.shields.io/badge/target-Opus_4.7-8A2BE2?style=flat-square">
+    <img alt="Effort" src="https://img.shields.io/badge/effort-xhigh%20%7C%20max-red?style=flat-square">
+    <img alt="Papers" src="https://img.shields.io/badge/papers-125+-orange?style=flat-square">
+    <img alt="Dimensions" src="https://img.shields.io/badge/scoring_dims-10-red?style=flat-square">
+    <img alt="Threshold" src="https://img.shields.io/badge/threshold-9.3%2F10-yellow?style=flat-square">
   </p>
   <p align="center">
-    Proactive workflow intelligence with Jarvis mode, codebase-aware context engineering,<br>
-    adaptive memory via ROSETTA.md, and 110+ scientific papers.<br>
+    <strong>v4.0 — Opus 4.7 native.</strong> Proactive workflow intelligence with Jarvis mode,<br>
+    codebase-aware context engineering, dual-layer memory (ROSETTA + auto-memory),<br>
+    Buffer-of-Thoughts meta-buffer, Meta-Reasoner bandit, and 125+ scientific papers.<br>
     Your intent in, your project understood, maximum results out.
   </p>
 </p>
@@ -67,7 +70,7 @@ After:   Structured XML prompt with:
          - All grounded in your ACTUAL project files
 ```
 
-**Empirical results** (8 test cases, v3.0 evaluation):
+**Empirical results** (8 test cases, v3.0 evaluation; v4.0 eval pending):
 
 | Metric | Baseline (no skill) | With llm-language | Delta |
 |--------|:-------------------:|:-----------------:|:-----:|
@@ -76,6 +79,51 @@ After:   Structured XML prompt with:
 | Edge case coverage | 25% | 100% | **+75pp** |
 | Codebase grounding | 0% | 100% | **+100pp** |
 | Mean quality score | 5.5/10 | 9.37/10 | **+64%** |
+
+---
+
+## What's New in v4.0 (April 20, 2026)
+
+Released alongside Claude Opus 4.7 (launched April 16, 2026). Major upgrades:
+
+**Model & effort**
+- Target model: **Claude Opus 4.7** (backward-compatible with 4.6, Sonnet 4.6)
+- Complexity → effort mapping: simple→`medium`, moderate→`high`, complex→`xhigh` (sweet spot), critical→`max`
+- Adaptive thinking (manual `budget_tokens` rejected on Opus 4.7 — stripped by Producer)
+- Deprecated params auto-stripped: `temperature`, `top_p`, `top_k`, `budget_tokens`
+- Task budgets beta support (`task-budgets-2026-03-13`)
+
+**Memory (dual-layer)**
+- ROSETTA.md stays as user-level cross-project patterns
+- Auto-memory integration (`~/.claude/projects/<project>/memory/`) for project-level learnings
+- PreCompact hook ships with plugin — snapshots ROSETTA before compaction (write-then-allow)
+- Four typed memories: user / feedback / project / reference
+
+**Scientific grounding (2026 papers)**
+- Buffer of Thoughts (NeurIPS 2024 Spotlight) → BoT meta-buffer in ROSETTA
+- Atom of Thoughts (arXiv 2502.12018) → convergent decomposition
+- Adaptive Graph of Thoughts (arXiv 2502.05078) → +46.2% GPQA
+- Meta-Reasoner (arXiv 2502.19918) → strategy bandit selection
+- A-MEM, Memory-R1, ACON → advanced memory patterns
+- Error-Taxonomy-Guided Optimization → per-class fixers
+
+**Scoring rubric (10 dimensions, threshold 9.3)**
+- New Dim 9: Effort Calibration (weight 0.06)
+- New Dim 10: Memory Integration (weight 0.05)
+- Weights rebalanced, threshold raised 9.2 → 9.3
+- Opus 4.7 compliance auto-fail checks
+
+**Cautionary integration**
+- "Prompt Optimization Is a Coin Flip" (arXiv 2604.14585) — only 9% of agents use auto-optimization; noisy results
+- MAD overhead warning (Smit et al. ICML 2024) — use Multi-Agent Debate selectively
+- llm-language augments human prompt design, doesn't replace
+
+**Jarvis v2.0**
+- Background plugin monitors integration
+- Push notifications in autonomous mode
+- Agent Teams mode proposals (when adversarial + cross-cutting)
+
+See [`skills/llm-language/references/opus-4-7-migration.md`](skills/llm-language/references/opus-4-7-migration.md) for the full migration guide.
 
 ---
 
