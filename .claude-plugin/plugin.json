@@ -1,5 +1,5 @@
 {
   "name": "llm-language",
-  "version": "4.0.0",
-  "description": "Self-evolving prompt meta-compiler targeting Claude Opus 4.7 with xhigh/max effort, adaptive thinking, task budgets, and dual-layer memory (ROSETTA.md + auto-memory). v4.0: Opus 4.7 native, Buffer-of-Thoughts meta-buffer, Meta-Reasoner bandit, guardrails, PreCompact hooks, 10 scoring dimensions, threshold 9.3. Backward-compatible with Opus 4.6/Sonnet 4.6."
+  "version": "4.1.0",
+  "description": "Self-evolving prompt meta-compiler targeting Claude Opus 4.7 with xhigh/max effort, adaptive thinking, task budgets, dual-layer memory (ROSETTA.md + auto-memory), AND skill-level meta-refinement. v4.1: automatic ROSETTA updates via 5 shipped hooks (SessionStart/UserPromptSubmit/Stop/TaskCompleted/PreCompact), Phase 7 Skill Audit auto-fixes deprecated params in user-owned skills, new /llm-language:refine-skills sub-skill for deep audit, Jarvis v3.0 overhaul (threshold 3 instead of 10, session-start awareness cards, first-run onboarding), micro-task splitting as standard methodology. 10 scoring dimensions, threshold 9.3. Backward-compatible with Opus 4.6/Sonnet 4.6."
 }

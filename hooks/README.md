@@ -1,58 +1,123 @@
 # llm-language hooks
 
-Claude Code hooks shipped with the llm-language plugin.
+Claude Code hooks shipped with the llm-language plugin. v4.1 auto-arms all hooks via the plugin-level `hooks.json` manifest — no manual `.claude/settings.json` editing required.
 
-## Available hooks
+## Shipped hooks
 
 ### `precompact-rosetta-snapshot.sh` — PreCompact
 
-Snapshots the user's active `~/.claude/ROSETTA.md` to project auto-memory before Claude Code compacts the conversation. Uses the **write-then-allow** pattern (exit 0) — NEVER blocks compaction.
+Snapshots `~/.claude/ROSETTA.md` to project auto-memory before Claude Code compacts the conversation. Uses **write-then-allow** pattern (exit 0) — NEVER blocks.
 
-**Why:** Long optimization sessions can hit compaction, which loses session-specific context. This hook ensures ROSETTA state is preserved in auto-memory.
+### `rosetta-load.sh` — SessionStart (v4.1 NEW)
 
-**Bug avoided:** Claude Code's `decision: "block"` on PreCompact cancels rather than defers (known bug, issue #856). We use exit 0 instead.
+Loads ROSETTA at session start, checks freshness (>30 days = warning), checks size (>300 lines = suggest consolidation), emits Jarvis awareness cards if patterns exist.
 
-## Installation
+### `rosetta-signal-capture.sh` — UserPromptSubmit (v4.1 NEW)
 
-Add to your project's `.claude/settings.json`:
+Captures user style signals from EVERY prompt:
+- Language (Italian / English / mixed)
+- Verbosity (terse / balanced / detailed)
+- Domain (python-data / solana / academic / web / stats)
+- Trigger phrases ("massima precisione", "ultrathink", etc.)
 
+Writes to `~/.claude/.rosetta-signal-buffer.jsonl` (capped 1000 lines FIFO).
+
+### `rosetta-session-summary.sh` — Stop (v4.1 NEW)
+
+At end of each turn, aggregates the signal buffer and appends a passive-observation entry to ROSETTA's Evolution Log. Throttled to max 1 update per 10 minutes (avoids thrashing).
+
+**This is what makes ROSETTA updates truly automatic on EVERY session, not just when `/llm-language` is explicitly invoked.**
+
+### `rosetta-task-pattern.sh` — TaskCompleted (v4.1 NEW)
+
+When a task completes (TaskUpdate → status: completed), appends an entry to ROSETTA's Jarvis Patterns table for anticipation learning.
+
+## Auto-installation
+
+All hooks auto-arm via the `hooks.json` manifest at plugin install. No manual configuration needed.
+
+**To verify hooks are active:**
+```bash
+# In Claude Code:
+/memory             # should show plugin hooks listed
+```
+
+**To disable a specific hook:**
+Add to your `~/.claude/settings.json`:
 ```json
 {
   "hooks": {
-    "PreCompact": [
+    "UserPromptSubmit": [
       {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/precompact-rosetta-snapshot.sh"
-          }
-        ]
+        "matcher": "llm-language",
+        "disabled": true
       }
     ]
   }
 }
 ```
 
-Or use user-level `~/.claude/settings.json` for cross-project installation.
-
 ## Dependencies
 
+All hooks use:
 - `bash` (macOS/Linux shipped)
-- `jq` (install via `brew install jq` or `apt install jq`)
-- `git` (optional — used to derive project slug; falls back to path-based slug)
+- `jq` (`brew install jq` or `apt install jq`)
+- Standard POSIX tools (`grep`, `awk`, `find`, `date`)
 
-## What gets written
+`rosetta-task-pattern.sh` also requires Claude Code v2.1.100+ for the `TaskCompleted` hook event.
 
-- `~/.claude/projects/<project>/memory/rosetta-session-<id>.md` — full ROSETTA snapshot
-- Updates `~/.claude/projects/<project>/memory/MEMORY.md` — adds pointer to snapshot
+## File layout after install
+
+```
+~/.claude/
+├── ROSETTA.md                          # user-level cross-project memory
+├── .rosetta-signal-buffer.jsonl        # ephemeral signal capture (capped 1000 lines)
+├── .rosetta-last-consolidated.ts       # throttle timestamp
+└── projects/<project>/memory/
+    ├── MEMORY.md                       # project-level index
+    ├── rosetta-session-<id>.md         # PreCompact snapshots
+    └── skill-refinement-audit.md       # Phase 7 audit trail
+```
+
+## Safety
+
+- `precompact-rosetta-snapshot.sh`: exit 0 always (never blocks compaction)
+- `rosetta-signal-capture.sh`: exit 0 always (never blocks prompts)
+- `rosetta-session-summary.sh`: exit 0 always, self-throttling
+- `rosetta-task-pattern.sh`: exit 0 always
+- `rosetta-load.sh`: emits warnings to stderr, never blocks startup
+
+Every hook is non-blocking by design — a hook failure never prevents Claude Code from proceeding.
 
 ## Verification
 
-After installation, trigger a manual compaction with `/compact` in a long session. Check:
+Test each hook manually:
 
 ```bash
-ls -la ~/.claude/projects/<your-project-slug>/memory/rosetta-session-*.md
+# SessionStart
+echo '{"trigger":"startup"}' | ~/.claude/plugins/marketplaces/llm-language/hooks/rosetta-load.sh
+
+# UserPromptSubmit
+echo '{"prompt":"aggiungi max precisione al codice"}' | ~/.claude/plugins/marketplaces/llm-language/hooks/rosetta-signal-capture.sh
+
+# Verify signal was captured
+tail -1 ~/.claude/.rosetta-signal-buffer.jsonl
 ```
 
-You should see a snapshot file with frontmatter `type: reference`.
+## Uninstallation
+
+To disable all llm-language hooks:
+```bash
+claude plugins disable llm-language
+```
+
+Or selectively:
+```json
+# ~/.claude/settings.json
+{
+  "hooks": {
+    "UserPromptSubmit": [{"matcher": "llm-language", "disabled": true}],
+    "Stop": [{"matcher": "llm-language", "disabled": true}]
+  }
+}
+```

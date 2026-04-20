@@ -8,8 +8,8 @@
     {
       "name": "llm-language",
       "source": "./",
-      "description": "Opus 4.7 native prompt meta-compiler: xhigh/max effort, adaptive thinking, task budgets, dual-layer memory (ROSETTA + auto-memory), Buffer-of-Thoughts, Meta-Reasoner bandit, 125+ scientific papers",
-      "version": "4.0.0"
+      "description": "Opus 4.7 native prompt meta-compiler v4.1: skill-level meta-refinement, automatic ROSETTA via 5 shipped hooks, Jarvis v3.0 overhaul (3-obs threshold, awareness cards), micro-task methodology. Buffer-of-Thoughts + Meta-Reasoner bandit + 125+ scientific papers.",
+      "version": "4.1.0"
     }
   ]
 }

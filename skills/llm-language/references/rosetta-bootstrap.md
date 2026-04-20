@@ -35,6 +35,7 @@ When `~/.claude/ROSETTA.md` does not exist, create it with the following content
 - Verbosity preference: (terse / balanced / detailed — detected)
 - Technical level: (beginner / intermediate / advanced / expert — detected)
 - Preferred effort: (low / medium / high / xhigh / max — detected from "massima precisione" signals)
+- **Preferred task granularity: micro-task-split (v4.1 DEFAULT)** — decompose complex tasks into 3-15 atomic micro-tasks, track via TaskCreate/TaskUpdate, execute sequentially with intermediate verification. Codified after empirical evidence that splitting produces more auditable, lower-error outcomes on multi-part critical work.
 
 ### Domain Expertise
 - Primary domains: (detected after first interactions)
@@ -65,6 +66,13 @@ Techniques and approaches that consistently produce high-quality results for thi
 
 ### Successful Prompt Structures
 - (populated after first interactions)
+
+### Standard Methodology Patterns (v4.1 defaults)
+
+- **Micro-task splitting** — for any task of complexity ≥ moderate, decompose into 3-15 atomic micro-tasks (each independently verifiable). Track progress via TaskCreate / TaskUpdate. Execute sequentially. Verify intermediate outputs before proceeding. Rationale: reduces error compounding, enables granular rollback, provides audit trail.
+- **Parallel batching within micro-tasks** — when micro-tasks have no dependency between them, batch into single response with multiple tool calls (Edit/Read/Write in parallel). Rationale: minimizes turn count without sacrificing granularity.
+- **Verify-before-advance** — after each micro-task marked complete, verify via dedicated check (test run, Read to confirm content, grep for absence of regressions) BEFORE starting next micro-task.
+- **Pre-flight verification** — before starting any destructive or mutating work, verify current state (git status, file contents, JSON validity). Rationale: no errors tolerated on max-precision tasks.
 
 ---
 

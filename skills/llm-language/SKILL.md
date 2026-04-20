@@ -1,6 +1,6 @@
 ---
 name: llm-language
-version: "4.0"
+version: "4.1"
 user-invocable: true
 effort: xhigh
 description: >
@@ -9,13 +9,15 @@ description: >
   quality", "ottimizza il prompt". This skill re-engineers the user's
   prompt through multi-agent debate with scientific optimization,
   ROSETTA.md + auto-memory dual-layer persistent memory, mandatory codebase
-  awareness, web deep research, and full skill access. Targets Claude Opus
-  4.7 with adaptive thinking + xhigh/max effort (backward-compatible with
-  Opus 4.6, Sonnet 4.6). NOTE: ROSETTA.md is updated passively in the
-  background to learn user style even when the skill is NOT invoked.
+  awareness, web deep research, full skill access, AND v4.1 skill-level
+  meta-refinement (audits relevant user-owned skills, applies safe fixes
+  automatically). Targets Claude Opus 4.7 with adaptive thinking + xhigh/max
+  effort (backward-compatible with Opus 4.6, Sonnet 4.6). Ships hooks for
+  AUTOMATIC ROSETTA + auto-memory updates on EVERY skill invocation, not
+  just explicit llm-language calls.
 ---
 
-# llm-language v4.0
+# llm-language v4.1
 
 ## Overview
 
@@ -43,6 +45,14 @@ A self-evolving prompt meta-compiler that re-engineers user messages through mul
 - 4 revision rounds max, Critic anchor at 5, context mismatch detection
 - CLAUDE.md auto-maintenance (WHY-WHAT-HOW structure, Codified Context methodology)
 - Deep research via WebSearch, full skill access
+
+**NEW in v4.1 (Skill Meta-Refinement + Jarvis Overhaul + Auto-ROSETTA):**
+- **Phase 7 Skill Audit** — every `/llm-language` invocation lightly audits skills relevant to the current task; applies SAFE auto-fixes (deprecated syntax, emphasis markers) and flags RISKY refinement candidates to Summary Banner
+- **New sub-skill `/llm-language:refine-skills`** — deep audit of all user-owned skills with 10-dim rubric, backups, rollback support
+- **Automatic ROSETTA updates** — shipped hooks (SessionStart, UserPromptSubmit, Stop, TaskCompleted) write to ROSETTA every session without requiring explicit `/llm-language` invocation
+- **Jarvis v3.0 overhaul** — lowered Phase 2 threshold (10 → 3 observations), session-start awareness cards, plugin monitor auto-arm, first-run onboarding
+- **Micro-task splitting as default methodology** — Producer decomposes complex tasks into 3-15 atomic tracked tasks; codified in ROSETTA bootstrap as standard pattern
+- **Skill refinement audit trail** — every auto-fix logged to `auto-memory/skill-refinement-audit.md` with rollback pointers
 
 ## When to Use
 
@@ -372,6 +382,7 @@ INSTRUCTIONS:
 17. If matching BoT template found, adapt it (<selected-techniques>D4-BoT</selected-techniques>)
 18. Emit <strategy-fallback> chain for complex/critical (Meta-Reasoner pattern)
 19. Fill <persistence> section: what to write to ROSETTA and auto-memory after execution
+20. **v4.1 micro-task decomposition (default for complexity ≥ moderate):** Produce 3-15 atomic sub-tasks in <sub-tasks>, each independently verifiable. Add explicit <verification-step> per sub-task. Prefer many-small-tasks over few-large-tasks — reduces error compounding, enables granular rollback, produces audit trail via TaskCreate integration.
 
 RESEARCH PROTOCOL:
 - complex/critical → WebSearch for domain best practices BEFORE writing the prompt
@@ -615,6 +626,80 @@ Update the relevant ROSETTA.md sections silently. This is lightweight — just a
    - Whether the user seemed satisfied (corrections = no, moved on = yes)
 
    This data accumulates even when `/llm-language:jarvis` is NOT invoked. Jarvis learns passively from every session, building its workflow model in the background. When the user eventually invokes Jarvis, the pattern library is already populated.
+
+### Phase 7: SKILL AUDIT (v4.1 NEW — light-touch auto)
+
+**Runs on every `/llm-language` invocation AFTER the main pipeline completes (Phase 5 Execute + Phase 6/6b/6c memory updates).**
+
+**Scope:** Only skills that were RELEVANT to the current task (from the Phase 1 registry) — not the entire ecosystem. Deep audit of all skills is via the dedicated `/llm-language:refine-skills` sub-skill.
+
+**Rubric:** See `references/skill-quality-rubric.md` (10 dimensions, threshold 8.0).
+
+**Pipeline:**
+
+1. **Filter** the Phase 1 skill registry to **user-owned skills only**:
+   - Include: `~/.claude/skills/*/SKILL.md`, `./.claude/skills/*/SKILL.md`
+   - Include: `~/.claude/plugins/marketplaces/<your-owned-repo>/**` (detect via `gh repo view` or git remote URL match)
+   - Exclude: third-party marketplace plugins, Claude Code built-ins, llm-language itself (recursive trap)
+
+2. **Quick-scan** each eligible skill (regex checks only, <500 tokens per skill):
+   - File line count (>500 → flag context-efficiency dim)
+   - Description length (<50 or >1536 chars → flag triggering-precision)
+   - Deprecated params (`temperature`, `top_p`, `top_k`, `budget_tokens` present → flag model-compatibility dim = 2)
+   - Legacy `thinking="ultrathink"` literal → flag model-compatibility
+   - Emphasis markers (count "VERY IMPORTANT" / "MUST" / all-caps repetitions → flag anti-pattern-avoidance)
+   - Missing frontmatter fields (no `description`, no `effort` on heavy skills → flag frontmatter-completeness)
+
+3. **Classify findings** by fix type (`references/skill-fixer-patterns.md`):
+   - SAFE: auto-apply with backup
+   - RISKY: report to user, require approval
+   - FORBIDDEN: report only, never modify
+
+4. **Auto-apply SAFE fixes** for user-owned skills:
+   - Create backup sibling: `<skill-dir>/.backup-<ISO-timestamp>.md`
+   - Apply fix via Edit tool
+   - Validate result (re-parse YAML frontmatter, confirm no unintended changes)
+   - Log to `~/.claude/projects/<project>/memory/skill-refinement-audit.md`
+
+5. **Report in Summary Banner** (Phase 5 output already extended in v4.1):
+   ```
+   ★ llm-language v4.1 ──────────────────────────────
+   Target: Opus 4.7 | Effort: {level} | Thinking: adaptive
+   Applied: {techniques} | Role: {persona-one-liner}
+   Complexity: {level} | Sub-tasks: {N} | Task budget: {N}k
+   Score: {score}/10 | Rounds: {N} | Threshold: 9.3
+   Codebase: {grounded/mismatch} | Research: {yes/no}
+   Memory: ROSETTA({patterns}) + auto-mem({entries})
+   BoT template: {name|none} | Bandit: {strategy}
+   Skills matched: {plugin:skill list}
+   Skill audit: {N scanned, N auto-fixed, N proposed, N flagged-readonly}  ← v4.1 NEW
+   ──────────────────────────────────────────────────
+   ```
+
+6. **Propose RISKY fixes** via AskUserQuestion if any found. Non-blocking — user can defer.
+
+7. **Write audit trail** to auto-memory with `type: reference`:
+   ```markdown
+   ---
+   name: skill-refinement-audit
+   description: Audit trail for all llm-language skill auto-refinements
+   type: reference
+   ---
+   ## 2026-04-20T22:XX:XXZ — /llm-language invocation
+   Target: ~/.claude/skills/<skill-name>/SKILL.md
+   Scope: user-owned
+   Before: 7.2/10 → After: 8.5/10
+   Fixes: F1 (deprecated thinking), F3 (emphasis strip), F5 (frontmatter add)
+   Rollback: <skill-dir>/.backup-2026-04-20T22-XX-XX.md
+   ```
+
+**Skipping conditions:**
+- User says "no skill audit" in their message
+- Current task is simple complexity (overhead not justified)
+- Auto-audit was run within the last 60 minutes for the same skill
+- User's ROSETTA has `disable_skill_audit: true`
+
+**Deep audit:** For full audit of ALL user-owned skills (not just task-relevant), user invokes `/llm-language:refine-skills` explicitly. See that skill's SKILL.md for details.
 
 ---
 

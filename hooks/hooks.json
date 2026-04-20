@@ -1,0 +1,75 @@
+{
+  "_comment": "Plugin-level hooks manifest for llm-language v4.1. Declares hooks and monitors that auto-arm when the plugin is installed.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/rosetta-load.sh",
+            "description": "Load ROSETTA freshness check + emit Jarvis awareness cards"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/rosetta-signal-capture.sh",
+            "description": "Capture language/verbosity/domain signals from every user prompt"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/rosetta-session-summary.sh",
+            "description": "Consolidate signal buffer into ROSETTA Evolution Log (throttled 10min)"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/rosetta-task-pattern.sh",
+            "description": "Log completed tasks to ROSETTA Jarvis Patterns for anticipation learning"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/precompact-rosetta-snapshot.sh",
+            "description": "Snapshot ROSETTA to auto-memory before compaction (write-then-allow)"
+          }
+        ]
+      }
+    ]
+  },
+  "monitors": [
+    {
+      "_comment": "Future: background monitor for Jarvis passive observation. Requires Claude Code v2.1.100+ monitors feature.",
+      "name": "jarvis-passive-observer",
+      "auto_arm": "on_session_start",
+      "enabled_by_default": false,
+      "description": "Passive Jarvis observation — learns workflow patterns without explicit invocation"
+    }
+  ],
+  "_installation_note": "Claude Code auto-discovers this file when the plugin is installed. No manual settings.json entry required. To disable any specific hook, use a matcher restriction in your ~/.claude/settings.json."
+}

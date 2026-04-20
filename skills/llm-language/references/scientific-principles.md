@@ -290,6 +290,45 @@ Reference for the llm-language skill. Each principle includes: citation, when to
 
 ---
 
+### D7. Skill-Level Meta-Refinement — v4.1 NEW
+
+**Citation:** Madaan et al. "Self-Refine" (NeurIPS 2023) extended to skill-artifact level. Inspired by PromptWizard (Microsoft 2024, arXiv:2405.18369) generalized from prompt-level to skill-level refinement.
+
+**When to apply:** Continuously, via Phase 7 of the main llm-language pipeline AND on explicit invocation of `/llm-language:refine-skills`. The same Generate→Critique→Refine cycle that improves prompts is now applied to the skills themselves.
+
+**Rationale:** Skills are load-bearing artifacts in the Claude Code ecosystem. Stale skills (using deprecated `thinking="ultrathink"`, emphasis markers, missing `effort` frontmatter) silently degrade output quality across every invocation. Applying self-refine AT the skill level (not just the prompt level) propagates improvements across every future prompt that uses that skill.
+
+**Rubric:** 10 quality dimensions (see `references/skill-quality-rubric.md`). Threshold 8.0 for "working at best".
+
+**Fix classification** (see `references/skill-fixer-patterns.md`):
+- SAFE: auto-apply with backup (deprecated syntax, emphasis strip, frontmatter add)
+- RISKY: propose with user approval (restructure, rewrite)
+- FORBIDDEN: report only (third-party plugins, Claude Code built-ins, llm-language itself)
+
+**Safety guarantees:**
+- Backup before every auto-fix (`.backup-<timestamp>.md` sibling)
+- Audit trail in auto-memory (`skill-refinement-audit.md`)
+- Rollback via `/llm-language:refine-skills rollback <skill>`
+- Never modifies upstream-owned skills (marketplace plugins)
+- Recursive self-modification blocked (llm-language skills excluded)
+
+**How to embed:**
+```xml
+<pipeline>
+  <!-- Phase 7 runs after main pipeline + memory updates -->
+  <phase-7-skill-audit>
+    <scope>user-owned-only</scope>
+    <rubric>references/skill-quality-rubric.md</rubric>
+    <auto-fix>safe-only</auto-fix>
+    <log-to>auto-memory/skill-refinement-audit.md</log-to>
+  </phase-7-skill-audit>
+</pipeline>
+```
+
+**Key insight:** Skills are to prompts as libraries are to functions — refining a skill propagates to every prompt that uses it. Meta-refinement has O(skill_count) cost but O(skill_count × invocation_count) benefit.
+
+---
+
 ### D6. Error-Taxonomy-Guided Optimization — v4.0
 
 **Citation:** "Error-Taxonomy-Guided Prompt Optimization," arXiv 2602.00997, 2026.

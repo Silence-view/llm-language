@@ -11,17 +11,18 @@
   <p align="center">
     <a href="#installation"><img alt="Claude Code Plugin" src="https://img.shields.io/badge/Claude_Code-Plugin-6B4FBB?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiAyMmgyMEwxMiAyeiIgZmlsbD0id2hpdGUiLz48L3N2Zz4="></a>
     <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square"></a>
-    <img alt="Version" src="https://img.shields.io/badge/version-4.0.0-blue?style=flat-square">
+    <img alt="Version" src="https://img.shields.io/badge/version-4.1.0-blue?style=flat-square">
     <img alt="Target" src="https://img.shields.io/badge/target-Opus_4.7-8A2BE2?style=flat-square">
     <img alt="Effort" src="https://img.shields.io/badge/effort-xhigh%20%7C%20max-red?style=flat-square">
+    <img alt="Hooks" src="https://img.shields.io/badge/hooks-5_auto_armed-green?style=flat-square">
     <img alt="Papers" src="https://img.shields.io/badge/papers-125+-orange?style=flat-square">
     <img alt="Dimensions" src="https://img.shields.io/badge/scoring_dims-10-red?style=flat-square">
     <img alt="Threshold" src="https://img.shields.io/badge/threshold-9.3%2F10-yellow?style=flat-square">
   </p>
   <p align="center">
-    <strong>v4.0 — Opus 4.7 native.</strong> Proactive workflow intelligence with Jarvis mode,<br>
-    codebase-aware context engineering, dual-layer memory (ROSETTA + auto-memory),<br>
-    Buffer-of-Thoughts meta-buffer, Meta-Reasoner bandit, and 125+ scientific papers.<br>
+    <strong>v4.1 — Skill Meta-Refinement + Auto-ROSETTA + Jarvis v3.0.</strong> Self-refining intelligence layer that<br>
+    audits your skills, updates ROSETTA on every session automatically, and proactively learns your workflow.<br>
+    Opus 4.7 native with dual-layer memory, Buffer-of-Thoughts meta-buffer, Meta-Reasoner bandit, 125+ scientific papers.<br>
     Your intent in, your project understood, maximum results out.
   </p>
 </p>
@@ -79,6 +80,49 @@ After:   Structured XML prompt with:
 | Edge case coverage | 25% | 100% | **+75pp** |
 | Codebase grounding | 0% | 100% | **+100pp** |
 | Mean quality score | 5.5/10 | 9.37/10 | **+64%** |
+
+---
+
+## What's New in v4.1 (April 20, 2026, same day as v4.0)
+
+**Skill-level meta-refinement** — llm-language now audits and refines **your own skills** automatically:
+- New **Phase 7 Skill Audit** — light-touch audit runs on every `/llm-language` invocation; auto-fixes deprecated params (`thinking="ultrathink"` → `effort="xhigh"`, strips `temperature`/`top_p`/`top_k`/`budget_tokens`), emphasis markers, adds missing frontmatter — only on user-owned skills, with backups
+- New sub-skill **`/llm-language:refine-skills`** — deep audit of ALL user-owned skills against 10-dim rubric
+- Rollback support: `/llm-language:refine-skills rollback <skill>`
+- Audit trail: `~/.claude/projects/<project>/memory/skill-refinement-audit.md`
+- Safety: never modifies marketplace-owned plugins, Claude Code built-ins, or llm-language itself
+
+**Automatic ROSETTA updates via 5 shipped hooks** — ROSETTA now updates on EVERY session, not just when `/llm-language` is explicitly invoked:
+- `SessionStart` → auto-load ROSETTA + emit Jarvis awareness cards
+- `UserPromptSubmit` → capture language/verbosity/domain/trigger signals
+- `Stop` → consolidate signal buffer into ROSETTA Evolution Log (throttled 10min)
+- `TaskCompleted` → log completed tasks to Jarvis Patterns
+- `PreCompact` → snapshot ROSETTA before compaction (write-then-allow)
+
+All hooks auto-arm via `hooks/hooks.json` manifest — no manual `.claude/settings.json` editing.
+
+**Jarvis v3.0 overhaul** — actually useful from day one:
+- First-run onboarding wizard (3 quick questions to seed pattern library)
+- Phase 2 threshold lowered 10 → 3 observations
+- Phase 3 threshold lowered 30 → 15 sessions
+- Session-start awareness cards (top 3 patterns with confidence)
+- Plugin monitor auto-arm at session start
+
+**Micro-task splitting as default methodology** — codified in ROSETTA:
+- For complexity ≥ moderate, Producer decomposes into 3-15 atomic sub-tasks
+- Each sub-task tracked via TaskCreate/TaskUpdate
+- `<verification-step>` per sub-task
+- Rationale: reduces error compounding, enables granular rollback, audit trail
+
+**New files:**
+- `skills/refine-skills/SKILL.md` — new sub-skill
+- `skills/llm-language/references/skill-quality-rubric.md` — 10-dim skill audit rubric
+- `skills/llm-language/references/skill-fixer-patterns.md` — SAFE/RISKY/FORBIDDEN fix catalog
+- `hooks/rosetta-load.sh` — SessionStart hook
+- `hooks/rosetta-signal-capture.sh` — UserPromptSubmit hook
+- `hooks/rosetta-session-summary.sh` — Stop hook
+- `hooks/rosetta-task-pattern.sh` — TaskCompleted hook
+- `hooks/hooks.json` — plugin-level manifest for auto-registration
 
 ---
 
