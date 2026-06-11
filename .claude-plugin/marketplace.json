@@ -8,8 +8,8 @@
     {
       "name": "llm-language",
       "source": "./",
-      "description": "Opus 4.7 native prompt meta-compiler v4.1: skill-level meta-refinement, automatic ROSETTA via 5 shipped hooks, Jarvis v3.0 overhaul (3-obs threshold, awareness cards), micro-task methodology. Buffer-of-Thoughts + Meta-Reasoner bandit + 125+ scientific papers.",
-      "version": "4.1.0"
+      "description": "Fable-5-era prompt meta-compiler v4.4 (Mythos-class aware): Opus 4.8 workhorse default + Claude Fable 5 escalation tier with mandatory cost guards/stop rules, alias-enum subagent dispatch (sonnet|opus|haiku|fable), refusal/fallbacks API surface, refreshed P0 deprecation watch (06-15 retirements + SDK credit claim + Fable credits cutover), update skill v3.2 with Mythos-class monitors. Still ships v4.3 NATIVE /goal INTEGRATION (Goal Gate + Execute Wrapper, deterministic condition synthesis, 3 cost guards), three-evaluator architecture, skill-level meta-refinement, auto-ROSETTA via 5 hooks, Jarvis v3.0, micro-task methodology. Buffer-of-Thoughts + Meta-Reasoner bandit + 130+ scientific papers.",
+      "version": "4.4.0"
     }
   ]
 }

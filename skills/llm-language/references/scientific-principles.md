@@ -476,6 +476,79 @@ Reference for the llm-language skill. Each principle includes: citation, when to
 
 ---
 
+### F8. Separate-Evaluator Pattern (Trajectory Convergence) — v4.3 NEW
+
+**Citation:** Anthropic Claude Code `/goal` (v2.1.139, 2026-05-12); Anthropic Outcomes (Code w/ Claude 2026-05-06); LangGraph HITL Checkpoints (LangChain, 2025); OpenAI Agents SDK harness (TechCrunch 2026-04-15); Google ADK Event Compaction (Cloud Next 2026); superpowers `verification-before-completion`.
+
+**When to apply:** Multi-turn autonomous execution where the executor model has tool access but coherence-across-turns must be enforced. Specifically: `complexity ∈ {complex, critical}`, `effort ∈ {xhigh, max}`, `task_budget ≥ 200K`, tool-heavy multi-step tasks.
+
+**Core idea — convergent industry pattern (2026):** Separate the *executor* (Opus 4.7, full tools) from the *evaluator* (small/fast model, transcript-only). The evaluator judges yes/no convergence on a measurable completion condition after every turn. Executor and evaluator operate on **orthogonal axes**:
+- Executor: produces artifacts, calls tools, modifies state
+- Evaluator: reads transcript, returns binary verdict + short reason
+
+The evaluator is NOT a Critic agent (Critic is pre-execution artifact quality, 10-dim rubric). The evaluator is a *trajectory* judge — does the trajectory still need more work?
+
+**Three-evaluator architecture in llm-language v4.3:**
+| Evaluator | Phase | Time-scale | Axis | Input | Decision |
+|---|---|---|---|---|---|
+| Producer self-check | Phase 2 | Single-shot | Generation quality | Raw input + memory | Implicit (one-shot) |
+| Critic | Phase 3 | Pre-execution | Artifact 10-dim | XML prompt | Accept / Revise |
+| /goal Haiku | Phase 5 | Mid-execution | Trajectory binary | Transcript turn-by-turn | Continue / Stop |
+
+These are NOT redundant — they cover orthogonal failure modes:
+- Producer alone misses systemic issues a fresh reviewer would catch
+- Critic alone misses execution drift (the XML can be perfect but the agent still wanders)
+- /goal alone misses upfront prompt quality (the agent converges on the wrong thing)
+
+**Mechanics of `/goal` evaluator (verified 2026-05-20):**
+- Default eval-model: Haiku 4.5 (cheapest, fast, sufficient for yes/no judgment)
+- Receives: full transcript + condition string (≤4000 char)
+- Returns: yes/no + short reason; "no" reason becomes next-turn guidance
+- **Does NOT call tools** — only judges what executor surfaces in transcript
+- Requires trusted workspace; blocked if `disableAllHooks` or `allowManagedHooksOnly`
+- One active goal per session; mutex with `/loop`
+- Persists across `--resume`/`--continue` (timer + token baseline reset)
+
+**Design constraints (must respect):**
+1. Condition must include `or stop after N turns` bound clause — no native cap
+2. Evaluator can only verify what's in transcript → force EVIDENCE block per turn
+3. Scope creep risk → allowlist clause in condition
+4. Conditions must be measurable (binary yes/no decidable from text alone) — vague conditions silently fail
+5. Producer must NOT author conditions (LLM hallucinates scope) — synthesize deterministically from `<acceptance-criteria>` + `<sub-tasks>`
+
+**Cost (per llm-language run, with 89% prompt cache hit on Haiku):**
+- complex (10-15 turns, 80K transcript): +$0.05-0.13 (0.14-0.4% of base Opus spend)
+- critical (20-30 turns, 200K transcript): +$0.22-0.45 (0.19-0.4% of base)
+- **Break-even**: false-completion rate without /goal ≈ 8-15%; with /goal ≈ 2-4%. ROI 30-42× at complex/critical.
+
+**Bound N derivation:**
+- complex: N = 15 (base 10 turns × 1.5 safety)
+- critical: N = 30 (base 20 × 1.5)
+- Hard ceiling: N_max = 40 (worst-case Haiku cap ~$0.45 cached)
+- Also: N ≥ max(6, 2 × subtask_count)
+
+**Anti-patterns (refer to Common Mistakes in SKILL.md):**
+- Vague conditions ("make code better") — evaluator silently fails
+- Missing bound clause — runaway token spend
+- Chaining with `/loop` — mutual retrigger storm (mutex required)
+- Producer-authored conditions — hallucination + scope creep
+- /goal on prompt-only tasks (where deliverable IS the prompt) — nothing to converge on
+
+**Convergence with other vendors (industry signal, 2026):**
+This is the same idea, by different names, shipping simultaneously across vendors:
+| Vendor | Name | Architecture |
+|---|---|---|
+| Anthropic | `/goal` (Claude Code) | Haiku evaluator per turn |
+| Anthropic | Outcomes (Managed Agents) | Rubric-based success criteria, evaluator decides |
+| OpenAI | Agents SDK harness | Configurable success predicate, separate model |
+| Google | ADK Event Compaction + Outcomes | Sliding window + evaluator (-38% tokens) |
+| LangChain | LangGraph HITL Checkpoints | Human-or-model checkpoint between nodes |
+| Superpowers | verification-before-completion | Pre-completion evidence requirement |
+
+When five independent teams converge on the same pattern in the same quarter, it's not coincidence — it's the right primitive for long-horizon autonomy.
+
+---
+
 ### F2. Claude-Specific XML Best Practices
 
 **Citation:** Anthropic, "Prompting Best Practices," Claude API Docs 2025.

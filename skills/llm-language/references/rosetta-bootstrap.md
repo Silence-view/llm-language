@@ -125,6 +125,83 @@ Contextual multi-armed bandit over reasoning strategies. Each arm tracks Beta(α
 
 ---
 
+## Goal Gate Configuration (v4.3 — `/goal` activation policy)
+
+User-level preferences and bandit priors for the `/goal` wrapper applied in llm-language Phase 5.
+
+### User Preference (sticky, overrides auto-policy)
+
+```yaml
+goal_gate:
+  mode: auto              # auto | always | off
+  critical_tier_flag: off  # off | on (gate critical-tier behind feature flag until FP rate < 5%)
+  daily_cap_usd: 5.00      # cost-guard per UTC day (default by tier; see below)
+  abort_on_hooks_disabled: true  # ABORT not degrade when disableAllHooks set
+```
+
+### Subscription Tier (auto-detect from `~/.claude/settings.json` or prompt-and-persist)
+
+```yaml
+subscription:
+  tier: unknown            # pro | max5x | max20x | unknown
+  detected_at: null
+  agent_sdk_pool_monthly_usd:
+    pro: 20
+    max5x: 100
+    max20x: 200
+```
+
+**Daily-cap defaults by tier (post-2026-06-15 Agent SDK billing split):**
+- Pro: $1.00/day
+- Max5x: $5.00/day
+- Max20x: $20.00/day
+
+**Activation default by tier:**
+- Pro post-split: `mode=off` (opt-in only — 50 complex runs ≈ exhaust pool)
+- Max5x: `mode=auto`
+- Max20x: `mode=auto`
+
+### Goal-Gate Bandit (Thompson priors over activation decision)
+
+Track whether `/goal` activation paid off per task class. Each row: Beta(α, β) posterior.
+
+| Task Class | Tier | α (activated→success) | β (activated→regret) | γ (skipped→retroactive miss) | Last Update |
+|---|---|---|---|---|---|
+| code-architecture | complex | 1 | 1 | 0 | — |
+| code-architecture | critical | 1 | 1 | 0 | — |
+| code-implementation | complex | 1 | 1 | 0 | — |
+| code-refactoring | complex | 1 | 1 | 0 | — |
+| (populated per task-class × tier over time) | | | | | |
+
+**Update rules:**
+- Activated + reached "yes" verdict + post-verification pass: α += 1
+- Activated + bounded-stop OR false-positive detected: β += 1
+- Skipped + post-hoc detected false-completion that /goal would have caught: γ += 1
+- When γ accumulates faster than α for a task class, escalate `mode=auto` recommendation
+
+### Goal Invocation Audit Pointers
+
+Per-run audit JSON files live in `auto-memory/goal_invocations/<run_id>.json`. ROSETTA tracks aggregate counters here:
+
+```yaml
+goal_aggregate:
+  invocations_total: 0
+  invocations_complex: 0
+  invocations_critical: 0
+  verdict_yes: 0
+  verdict_timeout: 0
+  false_positive_confirmed: 0
+  false_positive_rate: 0.00      # computed; gate critical tier until < 0.05
+  cumulative_haiku_cost_usd: 0.00
+  scope_violations: 0
+  resume_chain_collisions: 0
+  last_invocation_at: null
+```
+
+**Critical tier feature-flag flip rule:** Once `invocations_critical ≥ 50` AND `false_positive_rate < 0.05`, prompt user to flip `goal_gate.critical_tier_flag: on` automatically. Until then, critical tier requires explicit user confirmation before `/goal` is issued.
+
+---
+
 ## Failure Taxonomy (v4.0 — Error-Taxonomy-Guided fixers)
 
 Classifies common failure modes and maps to specialized fixer prompts.

@@ -280,6 +280,74 @@ This is the canonical XML structure the Producer agent must generate. Every fiel
   </edge-cases>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- GOAL-CONTROL: /goal wrapping (v4.3 — Phase 5 attaches)      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--
+    IMPORTANT: This block is NOT emitted by the Producer agent (Phase 2).
+    Phase 5 (Execute) deterministically synthesizes it from <acceptance-criteria>,
+    <sub-tasks> allowlist, complexity tier, and effort. Producer-authored
+    /goal conditions hallucinate scope and miss harness state.
+
+    Activation predicate (Phase 1.4b) must all hold:
+      - complexity ∈ {complex, critical}
+      - effort ∈ {xhigh, max}
+      - task_budget ≥ 200K
+      - task_type ∈ {multi-step-execution, tool-heavy}
+      - hooks_enabled (else ABORT, not degrade)
+      - no active /loop AND no active outer /goal
+      - LLM_LANGUAGE_DEPTH == 0 (recursion fence)
+      - ROSETTA.user_pref.goal_gate != "off"
+      - if critical: feature_flag.goal_critical == enabled
+  -->
+  <goal-control activate="false" eval-model="haiku" max-turns="0" tier="">
+    <!-- activate="true" only when ALL gate predicates pass; default false.
+         eval-model: default "haiku" (Anthropic default small/fast model).
+         max-turns: complex=15, critical=30, hard ceiling 40.
+         tier: "complex" | "critical" (mirrors complexity-level). -->
+
+    <allowlist>
+      <!-- Derived from <sub-tasks> + <acceptance-criteria> file refs.
+           Every Edit/Write outside this list triggers PreToolUse hook block. -->
+      <path><!-- e.g., src/feature_x.py --></path>
+    </allowlist>
+
+    <condition>
+      <!-- ≤ 4000 chars. Synthesized template (do NOT free-write):
+        All acceptance criteria below verified by tool output appearing in transcript:
+          {enumerated criteria from <acceptance-criteria>}
+        + All Edit/Write paths ⊆ ALLOWLIST: {paths}
+        + Every turn ends with EVIDENCE block: files_touched, tests_run (cmd + exit_code), assertions_verified
+        + If blocked, state BLOCKED: <reason> and stop
+        or stop after {N} turns
+      -->
+    </condition>
+
+    <evidence-spec>
+      <!-- Schema the executor must emit per turn for the Haiku evaluator to read.
+           Forces transcript-grounded evidence (evaluator does NOT call tools). -->
+      ```EVIDENCE
+      files_touched: [absolute paths]
+      tests_run: [{cmd: "...", exit_code: 0|N}]
+      assertions_verified: [free text]
+      ```
+    </evidence-spec>
+
+    <fallback>
+      <!-- On bounded-stop (turn cap hit without yes verdict):
+           1. Surface BLOCKED reason to user
+           2. Do NOT auto-retry — let user inspect transcript
+           3. Write audit entry with verdict="timeout" -->
+    </fallback>
+
+    <cost-guard>
+      <!-- Three layers (Phase 5 enforces, not the prompt):
+           - per-run: abort if Haiku tok > 5× expected_for_tier
+           - per-day: Pro $1 / Max5x $5 / Max20x $20 (post-2026-06-15 split)
+           - per-month: warn at 50% Agent SDK pool projection -->
+    </cost-guard>
+  </goal-control>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- PERSISTENCE: Memory writes after execution (v4.0)           -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <persistence>

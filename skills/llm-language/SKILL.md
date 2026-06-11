@@ -1,6 +1,6 @@
 ---
 name: llm-language
-version: "4.1"
+version: "4.3"
 user-invocable: true
 effort: xhigh
 description: >
@@ -11,8 +11,11 @@ description: >
   ROSETTA.md + auto-memory dual-layer persistent memory, mandatory codebase
   awareness, web deep research, full skill access, AND v4.1 skill-level
   meta-refinement (audits relevant user-owned skills, applies safe fixes
-  automatically). Targets Claude Opus 4.7 with adaptive thinking + xhigh/max
-  effort (backward-compatible with Opus 4.6, Sonnet 4.6). Ships hooks for
+  automatically). Targets the Fable 5 / Opus 4.8 era (Mythos-class aware,
+  v4.4): default workhorse Opus 4.8, escalation to Claude Fable 5 for frontier
+  long-horizon work with mandatory cost guards + stop rules; adaptive thinking
+  + xhigh/max effort (backward-compatible with Opus 4.7/4.6, Sonnet 4.6).
+  Ships hooks for
   AUTOMATIC ROSETTA + auto-memory updates on EVERY skill invocation, not
   just explicit llm-language calls.
 ---
@@ -53,6 +56,15 @@ A self-evolving prompt meta-compiler that re-engineers user messages through mul
 - **Jarvis v3.0 overhaul** — lowered Phase 2 threshold (10 → 3 observations), session-start awareness cards, plugin monitor auto-arm, first-run onboarding
 - **Micro-task splitting as default methodology** — Producer decomposes complex tasks into 3-15 atomic tracked tasks; codified in ROSETTA bootstrap as standard pattern
 - **Skill refinement audit trail** — every auto-fix logged to `auto-memory/skill-refinement-audit.md` with rollback pointers
+
+**NEW in v4.4 (Fable-5 / Mythos-class era — 2026-06-11):**
+- **Model landscape retarget** — workhorse default is **Opus 4.8** (`effort: high` default, $5/$25, 1M ctx); **Claude Fable 5** (`claude-fable-5`, Mythos-class, $10/$50) is the NEW escalation tier ABOVE "max on Opus" for frontier long-horizon agentic work. Full reference: `references/fable-5-era.md`
+- **Terminology guard** — say "Mythos-class", never "Claude 5 family" (official docs never use it). No Sonnet 5 / Haiku 5 / Opus 5 exist
+- **Fable 5 constraints baked into rewriting rules** — adaptive thinking always-on (no disable, no extended thinking, no raw CoT), depth via `effort` only, refusal surface (`stop_reason: "refusal"` + `stop_details.category`), `fallbacks` beta param
+- **Mandatory cost guards + stop rules when targeting Fable 5** — ~7.5× output-token spread across effort tiers, $110/day real-world datapoint; every Fable-5-targeted prompt MUST carry a bound (task_budget, /goal bound clause, or explicit completion condition)
+- **Subagent dispatch fixed** — Agent tool model enum is `sonnet|opus|haiku|fable`; version-pinned values (`opus-4-7`) are invalid. Producer/Critic dispatch on `opus`; `fable` reserved for critical-tier Producer when user opts in
+- **Deprecation P0 refreshed** — Sonnet 4 / Opus 4 retire 2026-06-15 (→ `claude-sonnet-4-6` / `claude-opus-4-8`); Agent SDK billing split same day (manual claim!); Fable 5 subscription window ends 2026-06-22; Opus 4.1 retires 2026-08-05
+- **New research integrated** — MASPO (ICML 2026), Self-Evolving Memory for APO (arXiv:2603.21520), MemPO (arXiv:2603.00680)
 
 ## When to Use
 
@@ -262,20 +274,34 @@ Run `Glob` on `~/.claude/skills/*/SKILL.md`, `~/.claude/agents/*.md`, and `~/.cl
 
 **1.3 Classify Complexity + Select Effort (v4.0)**
 
-Map complexity directly to Opus 4.7 `effort` parameter:
+Map complexity to target model + `effort` (v4.4 — see `references/fable-5-era.md`):
 
-| Complexity | Description | Effort | Max Tokens | Task Budget |
-|---|---|---|---|---|
-| **simple** | single-step, clear output, no ambiguity | `medium` | 4k | omit |
-| **moderate** | multi-step, clear dependencies | `high` | 16k | omit |
-| **complex** | multiple approaches, architecture decisions | `xhigh` | 64k | 200k |
-| **critical** | high-stakes, irreversible, frontier problem | `max` | 128k | 400-800k |
+| Complexity | Description | Target Model | Effort | Max Tokens | Task Budget |
+|---|---|---|---|---|---|
+| **simple** | single-step, clear output, no ambiguity | Opus 4.8 (or Sonnet 4.6) | `medium` | 4k | omit |
+| **moderate** | multi-step, clear dependencies | Opus 4.8 | `high` | 16k | omit |
+| **complex** | multiple approaches, architecture decisions | Opus 4.8 | `xhigh` | 64k | 200k |
+| **critical** | high-stakes, irreversible, frontier problem | Opus 4.8 `max` → escalate **Fable 5** `xhigh` | see notes | 128k | 400-800k |
 
 **Notes:**
-- `xhigh` is the Anthropic-recommended starting point for coding and agentic work on Opus 4.7
+- `xhigh` is the Anthropic-recommended starting point for coding and agentic work on Opus 4.7/4.8
 - `max` adds significant cost for small gains on most workloads and can cause overthinking on structured-output tasks — reserve for genuinely frontier problems
-- If user explicitly says "massima precisione" / "maximum quality" → escalate by one level (complex→max, moderate→xhigh)
+- **v4.4 escalation rule**: "max on Opus" is no longer the capability ceiling. For frontier long-horizon agentic tasks (hours-scale autonomy, hardest reasoning), prefer **Fable 5 at high/xhigh** over Opus 4.8 at max — BUT only with explicit cost guard + stop rule (Fable 5 is 2× Opus pricing, ~7.5× output-token spread across effort tiers, and "keeps working until the harness cuts it off"). Surface the cost trade-off to the user before targeting Fable 5
+- Fable 5 constraints: adaptive thinking always on (no disable), no extended thinking, depth via `effort` only
+- If user explicitly says "massima precisione" / "maximum quality" → escalate by one level (complex→max, moderate→xhigh; critical→propose Fable 5)
 - If target model is Sonnet 4.6, compress: simple→low, moderate→medium, complex→high, critical→max
+
+**1.3b Orchestration escalation — ultracode (v4.4):**
+
+`ultracode` is NOT a sixth `effort` tier — it is a Claude Code orchestration toggle (xhigh effort + automatic dynamic-workflow triggering: script-orchestrated fan-out of tens-hundreds of subagents per substantive task). Treat it as a THIRD escalation axis alongside model and effort:
+
+| Axis | Lever | When |
+|---|---|---|
+| Depth | `effort` low→max | reasoning difficulty |
+| Capability | Opus 4.8 → Fable 5 | frontier ceiling needed |
+| Breadth | single-agent → workflow → **ultracode** | many independent sub-tasks, adversarial verification, scale one context can't hold |
+
+Recommend ultracode in the generated prompt ONLY when: complexity ∈ {complex, critical} AND the task decomposes into ≥5 independent sub-tasks or requires adversarial multi-perspective verification. ALWAYS include the cost warning: ultracode is a per-task keyword, not a per-session default (community datapoint: ~20% of weekly Max tokens burned in one day with it left on). When the user's own message contains "ultracode", the harness auto-arms workflows — the prompt should then structure work as workflow-friendly phases (understand → design → implement → review) rather than re-requesting orchestration.
 
 **1.4 Assess Uncertainty**
 
@@ -298,6 +324,52 @@ Before proceeding, evaluate: is the user's intent clear enough to generate a hig
 
 **If uncertainty is LOW or ROSETTA.md resolves it:** proceed without interrupting the user. ROSETTA.md preferences have priority over asking — if the answer is already in ROSETTA, don't ask again.
 
+**1.4b Goal Gate (v4.3 — Phase 1.4b NEW)**
+
+Decide whether Phase 5 Execute will be wrapped in Claude Code's `/goal` slash command (separate-evaluator trajectory check via Haiku per turn). This decision is made HERE in Phase 1 (with full intake metadata) and ENACTED in Phase 5 (when execution actually begins) — Producer (Phase 2) is NOT involved in `/goal` authoring (see scientific-principles.md F8 — deterministic synthesis prevents LLM scope creep).
+
+**Activation predicate — ALL must hold (8 clauses):**
+
+1. `complexity ∈ {complex, critical}` — from Phase 1.3
+2. `effort ∈ {xhigh, max}` — from Phase 1.3
+3. `task_budget ≥ 200K` — from Phase 1.3 (excludes simple/moderate runs)
+4. `task_type ∈ {multi-step-execution, tool-heavy}` — NOT prompt-engineering-only deliverables (where the prompt IS the deliverable; nothing to converge on at runtime)
+5. `hooks_enabled = true` — probe `.claude/settings.json` for `disableAllHooks` and `allowManagedHooksOnly`; if either is true → **ABORT, do not degrade** (safety layer requires hooks)
+6. `no_active_loop` — check session state; mutex with `/loop` (different retrigger mechanics → storm)
+7. `no_active_outer_goal` AND `LLM_LANGUAGE_DEPTH == 0` — recursion fence (env counter incremented on entry, decremented on exit)
+8. `ROSETTA.goal_gate.mode ≠ "off"` — user opt-out respected; `mode="always"` softens clauses 1-3 to `complexity ≥ moderate`
+
+Additionally for `complexity == critical`: require `ROSETTA.goal_gate.critical_tier_flag == "on"` (feature flag stays off until aggregate `false_positive_rate < 0.05` over ≥ 50 critical invocations).
+
+**Output of Phase 1.4b — store in pipeline state:**
+
+```yaml
+goal_gate:
+  active: true|false
+  tier: complex|critical|none
+  bound_N: 15 (complex) | 30 (critical) | computed = min(N_tier, max(6, 2*subtask_count), 40)
+  allowlist_seed: [paths from <sub-tasks> + <acceptance-criteria> file refs]
+  skip_reason: <one-line reason if active=false; for telemetry>
+```
+
+**Why deterministic synthesis (not Producer-authored):**
+
+The Producer is an LLM. Asking it to write a `/goal` completion condition risks hallucinated scope ("when the code is good"), missed bound clauses, and harness-state ignorance (it doesn't know if hooks are enabled). The 3-agent debate (architecture/safety/cost, llm-language v4.3 design 2026-05-20) converged unanimously: **synthesize in Phase 5 from intake metadata**, NOT in Phase 2. See `references/scientific-principles.md` § F8 for full rationale.
+
+**Skipping conditions (active=false, with telemetry):**
+
+| Reason | Outcome |
+|---|---|
+| complexity < complex | Skip silently (cost > value at this tier) |
+| effort < xhigh | Skip silently |
+| task_budget < 200K | Skip silently |
+| prompt-only task | Skip silently (no trajectory to converge) |
+| `disableAllHooks` / `allowManagedHooksOnly` | **ABORT entire Phase 5 OR downgrade complexity** — surface to user |
+| active `/loop` detected | Refuse run; ask user to cancel one |
+| recursion depth > 0 | Silent skip (inner llm-language invocation) |
+| ROSETTA opt-out | Silent skip |
+| critical without feature flag | Require explicit user confirmation OR downgrade to no-/goal |
+
 **1.5 Select Scientific Principles**
 
 Use the Quick Decision Matrix in `references/scientific-principles.md`. Cross-reference with ROSETTA.md effective patterns — if the user historically responds well to certain techniques, prefer those.
@@ -306,17 +378,22 @@ Use the Quick Decision Matrix in `references/scientific-principles.md`. Cross-re
 
 Read `references/xml-prompt-template.md` for the Producer agent.
 
-### Phase 2: GENERATE (Producer Subagent) — v4.0 Opus 4.7 native
+### Phase 2: GENERATE (Producer Subagent) — v4.4 Fable-5-era native
 
-Dispatch a **general-purpose Agent** (model=opus-4-7, effort=xhigh by default) with FULL tool access:
+Dispatch a **general-purpose Agent** (model=`opus`, effort=xhigh by default; model=`fable` ONLY for critical tier with user-confirmed cost guard — version-pinned enum values like `opus-4-7` are invalid) with FULL tool access:
 
 ```
-You are an expert prompt engineer specializing in Claude Opus 4.7 optimization.
+You are an expert prompt engineer specializing in Fable-5-era Claude optimization
+(Opus 4.8 workhorse, Claude Fable 5 Mythos-class escalation tier).
 You have access to ALL tools: WebSearch, Read, Grep, Glob, Bash, and all
 available skills. Use them when needed.
 
 Your task: transform the user's raw input into a maximally optimized XML prompt
-targeting Claude Opus 4.7 (falls back to Opus 4.6/Sonnet 4.6 if target differs).
+targeting the selected model (default Opus 4.8; Fable 5 for confirmed critical
+tier; falls back to Opus 4.7/4.6/Sonnet 4.6 if target differs). If targeting
+Fable 5: adaptive thinking is always on, depth via effort only, ALWAYS include
+an explicit stop rule / budget bound, and add refusal-detection guidance
+(stop_reason "refusal" + stop_details.category) for benchmark/eval workloads.
 
 You MUST ground the prompt in the actual codebase — never generate in a vacuum.
 
@@ -420,10 +497,11 @@ CRITICAL RULES:
 
 ### Phase 3: CRITIQUE (Critic Subagent) — v4.0 10 dimensions
 
-Dispatch a **separate general-purpose Agent** (model=opus-4-7, effort=high) with FULL tool access:
+Dispatch a **separate general-purpose Agent** (model=`opus`, effort=high) with FULL tool access:
 
 ```
-You are an independent prompt quality critic targeting Claude Opus 4.7. You have
+You are an independent prompt quality critic for Fable-5-era Claude models
+(Opus 4.8 default, Fable 5 critical tier). You have
 access to ALL tools including WebSearch — use them to verify claims or research standards.
 
 ORIGINAL USER MESSAGE:
@@ -512,10 +590,37 @@ After revision, dispatch Critic one more time for scoring.
 
 ### Phase 5: EXECUTE
 
-**5.1 Summary Banner (v4.0)**
+**5.0 Goal Gate Resolution (v4.3 NEW)**
+
+Read pipeline state from Phase 1.4b. If `goal_gate.active == true`:
+
+1. **Recursion fence**: increment `LLM_LANGUAGE_DEPTH` env counter (or session-state file under skill cwd if no env shell available)
+2. **Synthesize completion condition** deterministically (NOT Producer-authored):
+   ```
+   All acceptance criteria below verified by tool output appearing in transcript:
+     {enumerate <acceptance-criteria>/<criterion> from generated XML, each on own line}
+   + All Edit/Write paths ⊆ ALLOWLIST: {goal_gate.allowlist_seed}
+   + Every turn ends with EVIDENCE fenced block containing:
+     - files_touched: [absolute paths]
+     - tests_run: [{cmd, exit_code}]
+     - assertions_verified: [free text]
+   + If blocked, state BLOCKED: <reason> and stop
+   or stop after {goal_gate.bound_N} turns
+   ```
+   Truncate to 4000 chars if needed (drop verbose criteria first; keep allowlist + EVIDENCE clause + bound clause as mandatory tail).
+3. **Cost pre-flight**:
+   - Read `ROSETTA.goal_aggregate.cumulative_haiku_cost_usd_today`
+   - Read `ROSETTA.goal_gate.daily_cap_usd` (default by subscription tier)
+   - If `today + estimated_run_cost > daily_cap`: degrade to no-/goal, log to banner
+4. **Issue** `/goal <condition>` (slash command, not as plain text)
+5. **Initialize audit JSON** at `auto-memory/goal_invocations/<run_id>.json` with `started_at`, `condition_text`, `turn_bound_N`, `files_allowlist`, `complexity_tier`, `hooks_active=true`
+
+If `goal_gate.active == false`: skip 5.0 entirely; proceed to 5.1.
+
+**5.1 Summary Banner (v4.3 — adds goal-gate row)**
 
 ```
-★ llm-language v4.0 ──────────────────────────────
+★ llm-language v4.3 ──────────────────────────────
 Target: Opus 4.7 | Effort: {level} | Thinking: adaptive
 Applied: {techniques} | Role: {persona-one-liner}
 Complexity: {level} | Sub-tasks: {N} | Task budget: {N}k
@@ -524,12 +629,41 @@ Codebase: {grounded/mismatch} | Research: {yes/no}
 Memory: ROSETTA({patterns}) + auto-mem({entries})
 BoT template: {name|none} | Bandit: {strategy}
 Skills matched: {plugin:skill list}
+Skill audit: {N scanned, N auto-fixed, N proposed, N flagged-readonly}
+Goal gate: {active|skipped:reason} tier={tier} N={bound_N} allowlist={K paths}
+          eval=Haiku est_cost=${est} ({pct}% of base) cap_today=${daily_used}/${daily_cap}
 ──────────────────────────────────────────────────
 ```
+
+If `goal_gate.active == false`, banner shows: `Goal gate: skipped:{reason}` on a single line.
 
 **5.2 Execute the Prompt**
 
 Follow the XML prompt as your execution blueprint. Use ultrathink thinking mode. The executing agent has access to ALL tools and ALL skills — it can invoke any discovered skill, run any command, search the web, read files, write code.
+
+**v4.3 EVIDENCE block requirement (when goal_gate.active):** every executor turn MUST end with a fenced `EVIDENCE` block per the schema in 5.0. The Haiku evaluator cannot call tools — it judges yes/no purely from transcript text. Without EVIDENCE blocks, the evaluator either false-positives (executor wrote prose claiming success) or never converges (no signal). PreToolUse hooks should also enforce Edit/Write paths ⊆ allowlist; out-of-allowlist writes are blocked with a reminder to either narrow scope or emit `SCOPE_EXPAND_REQUEST: <path> <why>` and stop.
+
+**5.2.5 Goal Convergence & Post-Verification (v4.3 NEW)**
+
+If `goal_gate.active == true`, after `/goal` reports verdict OR bound is hit:
+
+1. **`/goal clear`** (always; idempotent — clears even if already cleared)
+2. **Decrement** `LLM_LANGUAGE_DEPTH`
+3. **Read final verdict** from session state: `yes` | `timeout` | `aborted` (cost guard) | `blocked` (executor surfaced BLOCKED)
+4. **If verdict == yes**: run synchronous false-positive check via `superpowers:verification-before-completion`:
+   - Re-run every command from EVIDENCE `tests_run` in fresh shell
+   - `git diff --stat` of `files_actually_touched`: if zero LOC AND verdict=yes → flag false_positive
+   - Auto-detect: `evidence_blocks_count < turns_used/2` → flag suspicious
+   - Set audit `post_verification_status` and `false_positive_flag`
+5. **If verdict == timeout**: surface BLOCKED reason; offer one retry option (consuming round-2 slot up to tier cap); do NOT auto-retry
+6. **Write audit JSON** completion fields: `ended_at`, `turns_used`, `tokens_input/output`, `files_actually_touched`, `scope_violations`, `evidence_blocks_count/malformed`, `tests_run` summary, `evaluator_verdict`, `notes`
+7. **Update ROSETTA aggregate counters** (`goal_aggregate.*`)
+8. **Critical-tier flag flip check**: if `invocations_critical ≥ 50` AND `false_positive_rate < 0.05`, propose flipping `critical_tier_flag: on`
+
+**Cost runaway guards** (active throughout 5.2):
+- **Per-run**: if cumulative Haiku tokens > 5× expected_for_tier → issue `/goal clear`, fall through to non-/goal execution, mark audit `aborted`
+- **Per-day**: tracked in 5.0 pre-flight
+- **Per-month projection**: at next run, if MTD projection > 50% Agent SDK pool → advisory banner row
 
 **5.3 Ephemeral XML**
 
@@ -782,6 +916,16 @@ Note: Opus 4.7 tokenizer uses 1.0–1.35× more tokens than Opus 4.6 for same te
 | Using `decision:"block"` in PreCompact | Known Claude Code bug — cancels instead of defers. Use write-then-allow (exit 0). |
 | Suggesting Agent Teams without flag | Require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` be set before proposing team mode |
 | Verbose multi-line comments in generated code | Default to zero comments; only add when WHY is non-obvious |
+| **v4.3** — Producer authoring `<goal-control>` `<condition>` | Phase 5 synthesizes deterministically from `<acceptance-criteria>` + `<sub-tasks>`; Producer hallucinates scope |
+| **v4.3** — `/goal` condition without `or stop after N turns` | No native cap → runaway; bound clause is mandatory (Dim 4 = 3 forced revision) |
+| **v4.3** — `/goal` condition with vague terms ("make code better") | Evaluator silently fails — Haiku cannot decide; require measurable artifact paths + tests + exit codes |
+| **v4.3** — `/goal` activated on prompt-only task (deliverable IS the prompt) | Nothing to converge on at runtime; Phase 1.4b clause 4 (`task_type ∈ {multi-step-execution, tool-heavy}`) excludes |
+| **v4.3** — Chaining `/goal` with `/loop` | Mutex required (Phase 1.4b clause 6); they retrigger on different mechanics → storm |
+| **v4.3** — `/goal` invoked while `disableAllHooks` set | ABORT, do not degrade — safety layer requires hooks (Phase 1.4b clause 5) |
+| **v4.3** — `/goal` active in inner llm-language invocation | Recursion fence via LLM_LANGUAGE_DEPTH counter (Phase 1.4b clause 7) |
+| **v4.3** — Critic scoring trajectory ("agent should converge") instead of artifact ("XML is precise") | Critic and `/goal` Haiku are on orthogonal axes; axis-confusion = Dim 4 ≤ 6 |
+| **v4.3** — Skill-audit (Phase 7) inheriting `/goal` from parent | Phase 7 sets `goal_active = false` unconditionally — audit is read-only, single-pass |
+| **v4.3** — Missing EVIDENCE block in executor turns when `goal_gate.active` | Evaluator can't judge → false positives or never converges; PreToolUse hook should remind |
 
 ---
 

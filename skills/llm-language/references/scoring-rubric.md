@@ -313,3 +313,11 @@ To prevent score inflation (empirical finding: v2.0 self-assessment inflated by 
 9. **v4.0 NEW — Opus 4.7 auto-fail checks:** If target is claude-opus-4-7 and prompt contains `temperature`/`top_p`/`top_k`/`budget_tokens` literal → Dim 4 (Structure) = 3, forced revision regardless of other scores. These params return 400 on 4.7.
 10. **v4.0 NEW — Effort mismatch penalty:** `max` for simple/moderate tasks → Dim 9 ≤ 4 (overthinking cost). Missing `effort` attribute entirely → Dim 9 = 2.
 11. **v4.0 NEW — Memory underuse penalty:** ROSETTA/auto-memory has relevant entries but `<memory-context>` is empty → Dim 10 ≤ 3.
+12. **v4.3 NEW — Goal-gate correctness (extends Dim 9 Effort Calibration):**
+    - Complexity = complex/critical AND task is multi-step + tool-heavy AND `<goal-control activate>` missing OR `activate="false"` without justification → Dim 9 ≤ 5 (gate skipped when it should fire).
+    - Complexity = simple/moderate AND `<goal-control activate="true">` present → Dim 9 ≤ 4 (over-activation, wasted Haiku spend).
+    - `<goal-control>` present but `<condition>` lacks `or stop after N turns` bound clause → Dim 4 (Structure) = 3, forced revision (runaway risk).
+    - `<goal-control>` present but Producer authored `<condition>` free-text (not template-synthesized) → Dim 9 ≤ 4 (hallucination/scope-creep risk).
+    - `<goal-control>` present without `<allowlist>` for non-trivial Edit/Write tasks → Dim 3 (Completeness) ≤ 6 (scope-creep prevention missing).
+    - `<goal-control activate="true">` AND `<recursion-depth>` indicates LLM_LANGUAGE_DEPTH > 0 → Dim 9 = 2 (recursion fence violated).
+13. **v4.3 NEW — Three-evaluator non-redundancy check:** Critic's role is pre-execution artifact quality (artifact-axis). `/goal` Haiku's role is mid-execution trajectory (trajectory-axis). If Critic appears to be scoring trajectory (e.g., "the agent should converge") rather than artifact (e.g., "the XML is precise") → score the Critic's own output for axis-confusion via Dim 4 ≤ 6.
